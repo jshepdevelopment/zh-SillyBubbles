@@ -16,46 +16,51 @@ import java.util.Random;
 
 public class SillyBubblesGame implements ApplicationListener {
 
-	// create Actor "Bubble that displays TextureRegion passed
+
+
+
+	// create Bubble as an Actor and show the texture region
 	class Bubble extends Actor {
+
 		private TextureRegion _texture;
-		//float bubbleX = 0, bubbleY = 0;
-		public boolean started = false;
+		private TextureRegion prizeTexture;
+		int prizeID = 0;
 		int speed = 0;
 
-		// random number seed
-		Random random = new Random();
-		int randomX = random.nextInt(Gdx.graphics.getWidth());
-
 		public Bubble(TextureRegion texture){
+
+			// set bounds
 			_texture = texture;
 			setBounds(getX(), getY(), _texture.getRegionWidth(), _texture.getRegionHeight());
 
+
+			// get input
 			this.addListener(new InputListener() {
 				public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons) {
-					Gdx.app.log("JSLOG", "Touched" + getName());
+					//Gdx.app.log("JSLOG", "Touched" + getName());
 					setVisible(false);
 					return true;
 				}
 			});
 		}
 
-
 		// implements draw() completely to handle rotation and scaling
 		public void draw(Batch batch, float alpha) {
+			batch.draw(prizeTexture, getX(), getY(),
+					getOriginX(), getOriginY(), getWidth(), getHeight(),
+					getScaleX()/2, getScaleY()/2, getRotation());
+
 			batch.draw(_texture, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
 					getScaleX(), getScaleY(), getRotation());
 		}
 
-
-        /*
         // This hit() instead of checking against a bounding box, checks a bounding circle.
         public Actor hit(float x, float y, boolean touchable){
             // If this Actor is hidden or untouchable, it cant be hit
             if(!this.isVisible() || this.getTouchable() == Touchable.disabled)
                 return null;
 
-            // Get centerpoint of bounding circle, also known as the center of the rect
+            // get centerpoint of bounding circle, also known as the center of the rect
             float centerX = getWidth()/2;
             float centerY = getHeight()/2;
 
@@ -72,31 +77,50 @@ public class SillyBubblesGame implements ApplicationListener {
                     + ((centerY - y) * (centerY - y)));
 
             // If the distance is less than the circle radius, it's a hit
-            if(distance <= radius) return this;
+            if(distance <= radius) {
+				Gdx.app.log("JSLOG", "bubble " + this + " hit!");
+				this.reset();
+				return this;
+			}
 
             // Otherwise, it isnt
             return null;
-        }*/
+        }
 
 		@Override
 		public void act(float delta){
 
-
 			this.setPosition(this.getX(), this.getY() + this.speed);
-			Gdx.app.log("JSLOG", "this.getY() " + this.getY() + " this.getX() " + this.getX());
+			//Gdx.app.log("JSLOG", "this.getY() " + this.getY() + " this.getX() " + this.getX());
 
 			if(this.getY() > Gdx.graphics.getHeight() + _texture.getRegionHeight()) {
 				this.reset();
 			}
 
-			if(this.started){
-
-				this.speed++;
-				//started=false;
-			}
 		}
 
 		public void reset() {
+
+			Random random = new Random();
+			int randomPrize = random.nextInt(10) + 1;
+
+			// set prize
+			if (randomPrize == 1) {
+				prizeTexture = new TextureRegion(new Texture("diamond.png"));
+				prizeID = 1;
+			}
+			if (randomPrize == 2) {
+				prizeTexture = new TextureRegion(new Texture("firstaid.png"));
+				prizeID = 2;
+			}
+			if (randomPrize == 3) {
+				prizeTexture = new TextureRegion(new Texture("star.png"));
+				prizeID = 3;
+			}
+			if (randomPrize > 3) {
+				prizeTexture = new TextureRegion(new Texture("empty.png"));
+				// no prize ID is no prize
+			}
 
 			//Assign the position of the bubble to a random value within the screen boundaries
 			int randomX = random.nextInt(Gdx.graphics.getWidth());
@@ -105,8 +129,8 @@ public class SillyBubblesGame implements ApplicationListener {
 			this.speed =  random.nextInt(20) + 10;
 			this.setPosition(randomX, -3000);
 
-			Gdx.app.log("JSLOG", "bubble " + " reset.");
-			//Gdx.app.log("JSLOG", "randomX " + randomX);
+			Gdx.app.log("JSLOG", "bubble " + this + " reset.");
+
 
 		}
 	}
@@ -143,7 +167,6 @@ public class SillyBubblesGame implements ApplicationListener {
 			// set the name of the bubble to it's index within the loop
 			bubbles[i].setName(Integer.toString(i));
 			bubbles[i].reset();
-
 
 			// add to the stage
 			stage.addActor(bubbles[i]);
