@@ -11,13 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import java.util.Random;
 
 public class SillyBubblesGame implements ApplicationListener {
-
-
-
 
 	// create Bubble as an Actor and show the texture region
 	class Bubble extends Actor {
@@ -33,12 +32,11 @@ public class SillyBubblesGame implements ApplicationListener {
 			_texture = texture;
 			setBounds(getX(), getY(), _texture.getRegionWidth(), _texture.getRegionHeight());
 
-
 			// get input
 			this.addListener(new InputListener() {
 				public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons) {
 					//Gdx.app.log("JSLOG", "Touched" + getName());
-					setVisible(false);
+					//setVisible(false);
 					return true;
 				}
 			});
@@ -46,9 +44,10 @@ public class SillyBubblesGame implements ApplicationListener {
 
 		// implements draw() completely to handle rotation and scaling
 		public void draw(Batch batch, float alpha) {
-			batch.draw(prizeTexture, getX(), getY(),
-					getOriginX(), getOriginY(), getWidth(), getHeight(),
-					getScaleX()/2, getScaleY()/2, getRotation());
+			batch.draw(prizeTexture,
+					getX() + getScaleX() * 110,
+					getY() + getScaleY() * 120, getOriginX(), getOriginY(),
+					getWidth() / 2, getHeight() / 2, getScaleX(), getScaleY(), getRotation());
 
 			batch.draw(_texture, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
 					getScaleX(), getScaleY(), getRotation());
@@ -78,8 +77,10 @@ public class SillyBubblesGame implements ApplicationListener {
 
             // If the distance is less than the circle radius, it's a hit
             if(distance <= radius) {
-				Gdx.app.log("JSLOG", "bubble " + this + " hit!");
-				this.reset();
+				if(Gdx.input.justTouched()) {
+					Gdx.app.log("JSLOG", "bubble " + this + " hit!");
+					this.reset();
+				}
 				return this;
 			}
 
@@ -138,13 +139,13 @@ public class SillyBubblesGame implements ApplicationListener {
 	private Bubble[] bubbles;
 	//private MoveToAction[] moveActions;
 
-	private int bubbleCount = 8;
+	private int bubbleCount = 15;
 	private Stage stage;
 
 	@Override
 	public void create() {
 		// stage = new Stage(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),true);
-		stage = new Stage();
+		stage = new Stage(new ScreenViewport());
 		final TextureRegion bubbleTexture = new TextureRegion(new Texture("bubble.png"));
 
 		// random number seed
