@@ -2,6 +2,7 @@ package com.sillybubbles.game;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -12,11 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import java.util.Random;
 
 public class SillyBubblesGame implements ApplicationListener {
+
+	FileHandle bubbleFile = Gdx.files.internal("data/bubbleFile");
 
 	// create Bubble as an Actor and show the texture region
 	class Bubble extends Actor {
@@ -25,6 +27,7 @@ public class SillyBubblesGame implements ApplicationListener {
 		private TextureRegion prizeTexture;
 		int prizeID = 0;
 		int speed = 0;
+		int diamondCount, starCount, firstAidCount;
 
 		public Bubble(TextureRegion texture){
 
@@ -77,6 +80,7 @@ public class SillyBubblesGame implements ApplicationListener {
 
             // If the distance is less than the circle radius, it's a hit
             if(distance <= radius) {
+				// check for justTouched will prevent holding hits
 				if(Gdx.input.justTouched()) {
 					Gdx.app.log("JSLOG", "bubble " + this + " hit!");
 					this.reset();
@@ -144,6 +148,8 @@ public class SillyBubblesGame implements ApplicationListener {
 
 	@Override
 	public void create() {
+
+
 		// stage = new Stage(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),true);
 		stage = new Stage(new ScreenViewport());
 		final TextureRegion bubbleTexture = new TextureRegion(new Texture("bubble.png"));
