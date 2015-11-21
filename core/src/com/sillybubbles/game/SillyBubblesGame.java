@@ -12,13 +12,16 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
 import java.util.Random;
 
 public class SillyBubblesGame implements ApplicationListener {
 
-	FileHandle bubbleFile = Gdx.files.internal("data/bubbleFile");
+	// create the items and count
+	PrizeItem diamondItem = new PrizeItem("Diamond", 0);
+	PrizeItem firstAidItem = new PrizeItem("First Aid", 0);
+	PrizeItem starItem = new PrizeItem("Star", 0);
 
 	// create Bubble as an Actor and show the texture region
 	class Bubble extends Actor {
@@ -27,7 +30,7 @@ public class SillyBubblesGame implements ApplicationListener {
 		private TextureRegion prizeTexture;
 		int prizeID = 0;
 		int speed = 0;
-		int diamondCount, starCount, firstAidCount;
+
 
 		public Bubble(TextureRegion texture){
 
@@ -83,6 +86,9 @@ public class SillyBubblesGame implements ApplicationListener {
 				// check for justTouched will prevent holding hits
 				if(Gdx.input.justTouched()) {
 					Gdx.app.log("JSLOG", "bubble " + this + " hit!");
+					if(this.prizeID==1)diamondItem.itemCount++;
+					if(this.prizeID==2)firstAidItem.itemCount++;
+					if(this.prizeID==3)starItem.itemCount++;
 					this.reset();
 				}
 				return this;
@@ -99,6 +105,8 @@ public class SillyBubblesGame implements ApplicationListener {
 			//Gdx.app.log("JSLOG", "this.getY() " + this.getY() + " this.getX() " + this.getX());
 
 			if(this.getY() > Gdx.graphics.getHeight() + _texture.getRegionHeight()) {
+
+
 				this.reset();
 			}
 
@@ -111,20 +119,20 @@ public class SillyBubblesGame implements ApplicationListener {
 
 			// set prize
 			if (randomPrize == 1) {
-				prizeTexture = new TextureRegion(new Texture("diamond.png"));
-				prizeID = 1;
+				this.prizeTexture = new TextureRegion(new Texture("diamond.png"));
+				this.prizeID = 1;
 			}
 			if (randomPrize == 2) {
-				prizeTexture = new TextureRegion(new Texture("firstaid.png"));
-				prizeID = 2;
+				this.prizeTexture = new TextureRegion(new Texture("firstaid.png"));
+				this.prizeID = 2;
 			}
 			if (randomPrize == 3) {
-				prizeTexture = new TextureRegion(new Texture("star.png"));
+				this.prizeTexture = new TextureRegion(new Texture("star.png"));
 				prizeID = 3;
 			}
 			if (randomPrize > 3) {
-				prizeTexture = new TextureRegion(new Texture("empty.png"));
-				// no prize ID is no prize
+				this.prizeTexture = new TextureRegion(new Texture("empty.png"));
+				prizeID = 0;// no prize ID is no prize
 			}
 
 			//Assign the position of the bubble to a random value within the screen boundaries
@@ -134,21 +142,39 @@ public class SillyBubblesGame implements ApplicationListener {
 			this.speed =  random.nextInt(20) + 10;
 			this.setPosition(randomX, -3000);
 
-			Gdx.app.log("JSLOG", "bubble " + this + " reset.");
+			Gdx.app.log("JSLOG", "diamondItem.itemCount " + diamondItem.itemCount);
+			Gdx.app.log("JSLOG", "firstAidItem.itemCount " + firstAidItem.itemCount);
+			Gdx.app.log("JSLOG", "starItem.itemCount " + starItem.itemCount);
+
 
 
 		}
 	}
 
-	private Bubble[] bubbles;
-	//private MoveToAction[] moveActions;
 
-	private int bubbleCount = 15;
 	private Stage stage;
 
 	@Override
 	public void create() {
 
+		FileHandle bubbleFile = Gdx.files.local("bubblefile.json");
+		boolean isExtAvailable = Gdx.files.isExternalStorageAvailable();
+		boolean isLocAvailable = Gdx.files.isLocalStorageAvailable();
+		String extRoot = Gdx.files.getExternalStoragePath();
+		String locRoot = Gdx.files.getLocalStoragePath();
+
+		String readMe = bubbleFile.readString();
+		Json json = new Json();
+		diamondItem = json.fromJson(PrizeItem.class, readMe);
+
+		Gdx.app.log("JSLOG", "isExtAvailable " + isExtAvailable);
+		Gdx.app.log("JSLOG", "isLocAvailable " + isLocAvailable);
+		Gdx.app.log("JSLOG", "extRoot " + extRoot);
+		Gdx.app.log("JSLOG", "bubble " + locRoot);
+
+
+		Bubble[] bubbles;
+		int bubbleCount = 15;
 
 		// stage = new Stage(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),true);
 		stage = new Stage(new ScreenViewport());
@@ -201,6 +227,11 @@ public class SillyBubblesGame implements ApplicationListener {
 
 	@Override
 	public void pause() {
+		FileHandle bubbleFile = Gdx.files.local("bubblefile.json");
+		Json json = new Json();
+		String writeMe = json.toJson(diamondItem);
+		bubbleFile.writeString(writeMe, false);
+		Gdx.app.log("JSLOG", "File write complete.");
 	}
 
 	@Override
