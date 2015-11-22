@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -16,12 +17,17 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.Random;
 
+import sun.security.pkcs11.wrapper.Constants;
+
 public class SillyBubblesGame implements ApplicationListener {
 
 	// create the items and count
 	PrizeItem diamondItem = new PrizeItem("Diamond", 0);
 	PrizeItem firstAidItem = new PrizeItem("First Aid", 0);
 	PrizeItem starItem = new PrizeItem("Star", 0);
+	TextureRegion background;
+	TextureRegion backgroundTrees;
+	ParallaxBackground rbg;
 
 	// create Bubble as an Actor and show the texture region
 	class Bubble extends Actor {
@@ -172,6 +178,8 @@ public class SillyBubblesGame implements ApplicationListener {
 		Gdx.app.log("JSLOG", "extRoot " + extRoot);
 		Gdx.app.log("JSLOG", "bubble " + locRoot);
 
+		background = new TextureRegion(new Texture("hills.png"));
+		backgroundTrees = new TextureRegion(new Texture("hills.png"));
 
 		Bubble[] bubbles;
 		int bubbleCount = 15;
@@ -179,6 +187,11 @@ public class SillyBubblesGame implements ApplicationListener {
 		// stage = new Stage(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),true);
 		stage = new Stage(new ScreenViewport());
 		final TextureRegion bubbleTexture = new TextureRegion(new Texture("bubble.png"));
+		rbg = new ParallaxBackground(new ParallaxLayer[]{
+				//	new ParallaxLayer(background, new Vector2(),new Vector2(0, 0)),
+				new ParallaxLayer(background,new Vector2(1.0f,1.0f),new Vector2(0, 500)),
+				//	new ParallaxLayer(background,new Vector2(0.1f,0),new Vector2(0, stage.getViewport().getScreenHeight()-200),new Vector2(0, 0)),
+		}, stage.getViewport().getScreenWidth(), stage.getViewport().getScreenHeight(), new Vector2(150,0));
 
 		// random number seed
 		Random random = new Random();
@@ -203,6 +216,7 @@ public class SillyBubblesGame implements ApplicationListener {
 
 			// add to the stage
 			stage.addActor(bubbles[i]);
+
 		}
 
 		Gdx.input.setInputProcessor(stage);
@@ -216,13 +230,20 @@ public class SillyBubblesGame implements ApplicationListener {
 	@Override
 	public void render() {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		rbg.render(Gdx.graphics.getDeltaTime());
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
+
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
+		rbg = new ParallaxBackground(new ParallaxLayer[]{
+				//	new ParallaxLayer(background, new Vector2(),new Vector2(0, 0)),
+				new ParallaxLayer(background,new Vector2(1.0f,1.0f),new Vector2(0, 500)),
+				//	new ParallaxLayer(background,new Vector2(0.1f,0),new Vector2(0, stage.getViewport().getScreenHeight()-200),new Vector2(0, 0)),
+		}, stage.getViewport().getScreenWidth(), stage.getViewport().getScreenHeight()/2, new Vector2(150,0));
 	}
 
 	@Override
