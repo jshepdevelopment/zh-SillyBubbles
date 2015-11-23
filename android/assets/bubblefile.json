@@ -1,0 +1,12 @@
+{
+  prizeItems: [
+    {
+      itemName: "Diamond",
+      itemCount: 10
+    },
+    {
+      itemName: "First-Aid",
+      itemCount: 150
+    }
+  ]
+}

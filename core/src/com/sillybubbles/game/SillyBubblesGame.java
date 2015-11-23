@@ -17,8 +17,6 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.Random;
 
-import sun.security.pkcs11.wrapper.Constants;
-
 public class SillyBubblesGame implements ApplicationListener {
 
 	// create the items and count
@@ -26,7 +24,6 @@ public class SillyBubblesGame implements ApplicationListener {
 	PrizeItem firstAidItem = new PrizeItem("First Aid", 0);
 	PrizeItem starItem = new PrizeItem("Star", 0);
 	TextureRegion background;
-	TextureRegion backgroundTrees;
 	ParallaxBackground rbg;
 
 	// create Bubble as an Actor and show the texture region
@@ -162,24 +159,26 @@ public class SillyBubblesGame implements ApplicationListener {
 
 	@Override
 	public void create() {
+		boolean fileExists = Gdx.files.external("bubblefile.json").exists();
 
-		FileHandle bubbleFile = Gdx.files.local("bubblefile.json");
-		boolean isExtAvailable = Gdx.files.isExternalStorageAvailable();
-		boolean isLocAvailable = Gdx.files.isLocalStorageAvailable();
-		String extRoot = Gdx.files.getExternalStoragePath();
-		String locRoot = Gdx.files.getLocalStoragePath();
+		if (fileExists) {
+			FileHandle bubbleFile = Gdx.files.local("bubblefile.json");
+			boolean isExtAvailable = Gdx.files.isExternalStorageAvailable();
+			boolean isLocAvailable = Gdx.files.isLocalStorageAvailable();
+			String extRoot = Gdx.files.getExternalStoragePath();
+			String locRoot = Gdx.files.getLocalStoragePath();
 
-		String readMe = bubbleFile.readString();
-		Json json = new Json();
-		diamondItem = json.fromJson(PrizeItem.class, readMe);
+			String readMe = bubbleFile.readString();
+			Json json = new Json();
+			diamondItem = json.fromJson(PrizeItem.class, readMe);
+			Gdx.app.log("JSLOG", "isExtAvailable " + isExtAvailable);
+			Gdx.app.log("JSLOG", "isLocAvailable " + isLocAvailable);
+			Gdx.app.log("JSLOG", "extRoot " + extRoot);
+			Gdx.app.log("JSLOG", "bubble " + locRoot);
 
-		Gdx.app.log("JSLOG", "isExtAvailable " + isExtAvailable);
-		Gdx.app.log("JSLOG", "isLocAvailable " + isLocAvailable);
-		Gdx.app.log("JSLOG", "extRoot " + extRoot);
-		Gdx.app.log("JSLOG", "bubble " + locRoot);
+		}
 
 		background = new TextureRegion(new Texture("hills.png"));
-		backgroundTrees = new TextureRegion(new Texture("hills.png"));
 
 		Bubble[] bubbles;
 		int bubbleCount = 15;
