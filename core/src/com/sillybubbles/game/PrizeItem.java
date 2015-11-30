@@ -20,7 +20,7 @@ public class PrizeItem {
         this.itemName = name;
         this.itemCount = count;
     }
-/*
+
     // getters and setters
     public String getItemName() {
         return itemName;
@@ -37,5 +37,5 @@ public class PrizeItem {
     public void setItemCount(int count) {
         this.itemCount = count;
     }
-*/
+
 }

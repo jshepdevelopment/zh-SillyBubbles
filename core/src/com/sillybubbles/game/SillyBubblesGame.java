@@ -13,8 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import java.util.ArrayList;
 import java.util.Random;
 
 public class SillyBubblesGame implements ApplicationListener {
@@ -33,7 +37,6 @@ public class SillyBubblesGame implements ApplicationListener {
 		private TextureRegion prizeTexture;
 		int prizeID = 0;
 		int speed = 0;
-
 
 		public Bubble(TextureRegion texture){
 
@@ -89,9 +92,18 @@ public class SillyBubblesGame implements ApplicationListener {
 				// check for justTouched will prevent holding hits
 				if(Gdx.input.justTouched()) {
 					Gdx.app.log("JSLOG", "bubble " + this + " hit!");
-					if(this.prizeID==1)diamondItem.itemCount++;
-					if(this.prizeID==2)firstAidItem.itemCount++;
-					if(this.prizeID==3)starItem.itemCount++;
+					if(this.prizeID==1) {
+						diamondItem.itemCount++;
+						Gdx.app.log("JSLOG", diamondItem.getItemCount() + " Diamonds collected.");
+					}
+					if(this.prizeID==2) {
+						firstAidItem.itemCount++;
+						Gdx.app.log("JSLOG", firstAidItem.getItemCount() + " First-aid collected.");
+					}
+					if(this.prizeID==3) {
+						starItem.itemCount++;
+						Gdx.app.log("JSLOG", starItem.getItemCount() + " Stars collected.");
+					}
 					this.reset();
 				}
 				return this;
@@ -145,11 +157,9 @@ public class SillyBubblesGame implements ApplicationListener {
 			this.speed =  random.nextInt(20) + 10;
 			this.setPosition(randomX, -3000);
 
-			Gdx.app.log("JSLOG", "diamondItem.itemCount " + diamondItem.itemCount);
-			Gdx.app.log("JSLOG", "firstAidItem.itemCount " + firstAidItem.itemCount);
-			Gdx.app.log("JSLOG", "starItem.itemCount " + starItem.itemCount);
-
-
+			//Gdx.app.log("JSLOG", "diamondItem.itemCount " + diamondItem.itemCount);
+			//Gdx.app.log("JSLOG", "firstAidItem.itemCount " + firstAidItem.itemCount);
+			//Gdx.app.log("JSLOG", "starItem.itemCount " + starItem.itemCount);
 
 		}
 	}
@@ -159,22 +169,8 @@ public class SillyBubblesGame implements ApplicationListener {
 
 	@Override
 	public void create() {
-		boolean fileExists = Gdx.files.external("bubblefile.json").exists();
 
-		if (fileExists) {
-			FileHandle bubbleFile = Gdx.files.local("bubblefile.json");
-			boolean isExtAvailable = Gdx.files.isExternalStorageAvailable();
-			boolean isLocAvailable = Gdx.files.isLocalStorageAvailable();
-			String extRoot = Gdx.files.getExternalStoragePath();
-			String locRoot = Gdx.files.getLocalStoragePath();
-
-			String readMe = bubbleFile.readString();
-			Json json = new Json();
-			diamondItem = json.fromJson(PrizeItem.class, readMe);
-			Gdx.app.log("JSLOG", "isExtAvailable " + isExtAvailable);
-			Gdx.app.log("JSLOG", "isLocAvailable " + isLocAvailable);
-			Gdx.app.log("JSLOG", "extRoot " + extRoot);
-			Gdx.app.log("JSLOG", "bubble " + locRoot);
+		if (Gdx.files.internal("bubblefile.json").exists()) {
 
 		}
 
@@ -247,14 +243,15 @@ public class SillyBubblesGame implements ApplicationListener {
 
 	@Override
 	public void pause() {
-		FileHandle bubbleFile = Gdx.files.local("bubblefile.json");
-		Json json = new Json();
-		String writeMe = json.toJson(diamondItem);
-		bubbleFile.writeString(writeMe, false);
-		Gdx.app.log("JSLOG", "File write complete.");
+
+		Gdx.app.log("JSLOG", "Game Paused.");
+		Gdx.app.log("JSLOG", "You have " + diamondItem.getItemCount() + " diamonds.");
+		Gdx.app.log("JSLOG", "You have " + firstAidItem.getItemCount() + " first-aids.");
+		Gdx.app.log("JSLOG", "You have " + starItem.getItemCount() + " stars.");
 	}
 
 	@Override
 	public void resume() {
+		Gdx.app.log("JSLOG", "Game On.");
 	}
 }
