@@ -1,9 +1,10 @@
 package com.sillybubbles.game;
 
-import com.badlogic.gdx.ApplicationListener;
+
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.files.FileHandle;
+
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -19,7 +20,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.Random;
 
-public class SillyBubblesGame implements ApplicationListener {
+public class SillyBubblesGame extends Game {
 
 	// create the items and count
 	PrizeItem diamondItem = new PrizeItem("Diamond", 1);
@@ -27,6 +28,10 @@ public class SillyBubblesGame implements ApplicationListener {
 	PrizeItem starItem = new PrizeItem("Star", 1);
 	TextureRegion background;
 	ParallaxBackground rbg;
+
+    private Game game;
+    public 
+    // constructor
 
 	// create Bubble as an Actor and show the texture region
 	class Bubble extends Actor {
