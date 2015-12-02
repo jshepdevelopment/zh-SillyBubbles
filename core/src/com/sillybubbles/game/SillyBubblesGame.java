@@ -2,6 +2,7 @@ package com.sillybubbles.game;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,20 +14,17 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
+
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class SillyBubblesGame implements ApplicationListener {
 
 	// create the items and count
-	PrizeItem diamondItem = new PrizeItem("Diamond", 0);
-	PrizeItem firstAidItem = new PrizeItem("First Aid", 0);
-	PrizeItem starItem = new PrizeItem("Star", 0);
+	PrizeItem diamondItem = new PrizeItem("Diamond", 1);
+	PrizeItem firstAidItem = new PrizeItem("First Aid", 1);
+	PrizeItem starItem = new PrizeItem("Star", 1);
 	TextureRegion background;
 	ParallaxBackground rbg;
 
@@ -170,11 +168,12 @@ public class SillyBubblesGame implements ApplicationListener {
 	@Override
 	public void create() {
 
-		if (Gdx.files.internal("bubblefile.json").exists()) {
+        Preferences prefs = Gdx.app.getPreferences("BubblePrefs"); // load the prefs file
+        diamondItem.itemCount = prefs.getInteger(diamondItem.itemName);
+        firstAidItem.itemCount = prefs.getInteger(firstAidItem.itemName);
+        starItem.itemCount = prefs.getInteger(starItem.itemName);
 
-		}
-
-		background = new TextureRegion(new Texture("hills.png"));
+        background = new TextureRegion(new Texture("hills.png"));
 
 		Bubble[] bubbles;
 		int bubbleCount = 15;
@@ -244,10 +243,17 @@ public class SillyBubblesGame implements ApplicationListener {
 	@Override
 	public void pause() {
 
-		Gdx.app.log("JSLOG", "Game Paused.");
+        Preferences prefs = Gdx.app.getPreferences("BubblePrefs");// We store the value 10 with the key of "highScore"
+        prefs.putInteger(diamondItem.itemName, diamondItem.itemCount);
+        prefs.putInteger(firstAidItem.itemName, firstAidItem.itemCount);
+        prefs.putInteger(starItem.itemName, starItem.itemCount);
+        prefs.flush(); // saves the preferences file
+
+        Gdx.app.log("JSLOG", "Game Paused.");
 		Gdx.app.log("JSLOG", "You have " + diamondItem.getItemCount() + " diamonds.");
 		Gdx.app.log("JSLOG", "You have " + firstAidItem.getItemCount() + " first-aids.");
 		Gdx.app.log("JSLOG", "You have " + starItem.getItemCount() + " stars.");
+
 	}
 
 	@Override
