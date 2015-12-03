@@ -16,8 +16,11 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import java.awt.Color;
 import java.util.Random;
 
 public class SillyBubblesGame extends Game {
@@ -28,6 +31,12 @@ public class SillyBubblesGame extends Game {
 	PrizeItem starItem = new PrizeItem("Star", 0);
 	TextureRegion background;
 	ParallaxBackground rbg;
+
+    private Skin skin;
+
+    Label diamondLabel;
+    Label firstAidLabel;
+    Label starLabel;
 
     boolean playing = true; // flag to switch between playing and checking items
 
@@ -281,6 +290,25 @@ public class SillyBubblesGame extends Game {
         firstAidItem.itemCount = prefs.getInteger(firstAidItem.itemName);
         starItem.itemCount = prefs.getInteger(starItem.itemName);
 
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        diamondLabel = new Label("You have " + diamondItem.itemCount + " diamonds.", skin);
+        firstAidLabel = new Label("You have " + firstAidItem.itemCount + " first-aids.", skin);
+        starLabel = new Label("You have " + starItem.itemCount + " stars.", skin);
+
+        //testLabel.setWidth(500f);
+        //testLabel.setHeight(500f);
+        diamondLabel.setFontScale(5f);
+        firstAidLabel.setFontScale(5f);
+        starLabel.setFontScale(5f);
+
+        diamondLabel.setPosition(0, Gdx.graphics.getHeight() - diamondLabel.getHeight()*16);
+        firstAidLabel.setPosition(0,Gdx.graphics.getHeight() - diamondLabel.getHeight()*16 - diamondLabel.getHeight()*8 );
+        starLabel.setPosition(0,Gdx.graphics.getHeight() - diamondLabel.getHeight()*16 - diamondLabel.getHeight()*16);
+
+        //testLabel.setPosition(Gdx.graphics.getWidth() - testLabel.getWidth(),
+        //        Gdx.graphics.getHeight()- testLabel.getHeight());
+
         background = new TextureRegion(new Texture("hills.png"));
 
 		Bubble[] bubbles;
@@ -334,6 +362,11 @@ public class SillyBubblesGame extends Game {
 
         // we will button on top, because it's like a HUD
         stage.addActor(bubbleButton);
+
+        menuStage.addActor(diamondLabel);
+        menuStage.addActor(firstAidLabel);
+        menuStage.addActor(starLabel);
+
         menuStage.addActor(bubbleBackButton);
 
         Gdx.input.setInputProcessor(stage);
@@ -349,6 +382,9 @@ public class SillyBubblesGame extends Game {
 	@Override
 	public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        diamondLabel = new Label("You have " + diamondItem.itemCount + " diamonds.", skin);
+        firstAidLabel = new Label("You have " + firstAidItem.itemCount + " first-aids.", skin);
+        starLabel = new Label("You have " + starItem.itemCount + " stars.", skin);
 
         if(playing) {
             rbg.render(Gdx.graphics.getDeltaTime());
