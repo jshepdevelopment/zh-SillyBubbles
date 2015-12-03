@@ -23,15 +23,121 @@ import java.util.Random;
 public class SillyBubblesGame extends Game {
 
 	// create the items and count
-	PrizeItem diamondItem = new PrizeItem("Diamond", 1);
-	PrizeItem firstAidItem = new PrizeItem("First Aid", 1);
-	PrizeItem starItem = new PrizeItem("Star", 1);
+	PrizeItem diamondItem = new PrizeItem("Diamond", 0);
+	PrizeItem firstAidItem = new PrizeItem("First Aid", 0);
+	PrizeItem starItem = new PrizeItem("Star", 0);
 	TextureRegion background;
 	ParallaxBackground rbg;
 
-    private Game game;
-    public 
-    // constructor
+    boolean playing = true; // flag to switch between playing and checking items
+
+    class BubbleButton extends Actor {
+        private TextureRegion _texture;
+
+        public BubbleButton(TextureRegion texture){
+            // set bounds
+            _texture = texture;
+            setBounds(getX(), getY(), _texture.getRegionWidth(), _texture.getRegionHeight());
+
+            // get input
+            this.addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons) {
+                    return true;
+                }
+            });
+        }
+
+        // implements draw() completely to handle rotation and scaling
+        public void draw(Batch batch, float alpha) {
+            batch.draw(_texture, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
+                    getScaleX(), getScaleY(), getRotation());
+        }
+
+        public Actor hit(float x, float y, boolean touchable) {
+
+            // get centerpoint of bounding circle, also known as the center of the rect
+            float centerX = getWidth() / 2;
+            float centerY = getHeight() / 2;
+
+            // Calculate radius of circle
+            float radius = (float) Math.sqrt(centerX * centerX +
+                    centerY * centerY);
+
+            // And distance of point from the center of the circle
+            float distance = (float) Math.sqrt(((centerX - x) * (centerX - x))
+                    + ((centerY - y) * (centerY - y)));
+
+            // If the distance is less than the circle radius, it's a hit
+            if (distance <= radius) {
+                if (Gdx.input.justTouched()) {
+                        Gdx.app.log("JSLOG", "Bubble button pressed.");
+                        Gdx.input.setInputProcessor(menuStage);
+                        playing = false;
+                }
+            }
+            // button not pressed, return null
+            return null;
+        }
+
+        @Override
+        public void act(float delta) {
+            this.setPosition(0, Gdx.graphics.getHeight() - _texture.getRegionHeight());
+        }
+    }
+
+    class BubbleBackButton extends Actor {
+        private TextureRegion _texture;
+
+        public BubbleBackButton(TextureRegion texture){
+            // set bounds
+            _texture = texture;
+            setBounds(getX(), getY(), _texture.getRegionWidth(), _texture.getRegionHeight());
+
+            // get input
+            this.addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons) {
+                    return true;
+                }
+            });
+        }
+
+        // implements draw() completely to handle rotation and scaling
+        public void draw(Batch batch, float alpha) {
+            batch.draw(_texture, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
+                    getScaleX(), getScaleY(), getRotation());
+        }
+
+        public Actor hit(float x, float y, boolean touchable) {
+
+            // get centerpoint of bounding circle, also known as the center of the rect
+            float centerX = getWidth() / 2;
+            float centerY = getHeight() / 2;
+
+            // Calculate radius of circle
+            float radius = (float) Math.sqrt(centerX * centerX +
+                    centerY * centerY);
+
+            // And distance of point from the center of the circle
+            float distance = (float) Math.sqrt(((centerX - x) * (centerX - x))
+                    + ((centerY - y) * (centerY - y)));
+
+            // If the distance is less than the circle radius, it's a hit
+            if (distance <= radius) {
+                if (Gdx.input.justTouched()) {
+                    Gdx.app.log("JSLOG", "Bubble back button pressed.");
+                    Gdx.input.setInputProcessor(stage);
+                    playing = true;
+                }
+            }
+            // button not pressed, return null
+            return null;
+        }
+
+        @Override
+        public void act(float delta) {
+            this.setPosition(0, Gdx.graphics.getHeight() - _texture.getRegionHeight());
+        }
+    }
 
 	// create Bubble as an Actor and show the texture region
 	class Bubble extends Actor {
@@ -111,7 +217,6 @@ public class SillyBubblesGame extends Game {
 				}
 				return this;
 			}
-
             // Otherwise, it isnt
             return null;
         }
@@ -123,11 +228,8 @@ public class SillyBubblesGame extends Game {
 			//Gdx.app.log("JSLOG", "this.getY() " + this.getY() + " this.getX() " + this.getX());
 
 			if(this.getY() > Gdx.graphics.getHeight() + _texture.getRegionHeight()) {
-
-
 				this.reset();
 			}
-
 		}
 
 		public void reset() {
@@ -169,6 +271,7 @@ public class SillyBubblesGame extends Game {
 
 
 	private Stage stage;
+    private Stage menuStage;
 
 	@Override
 	public void create() {
@@ -185,8 +288,16 @@ public class SillyBubblesGame extends Game {
 
 		// stage = new Stage(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),true);
 		stage = new Stage(new ScreenViewport());
+
+        // this is a simple game, so we just gonna have a menu type list of viewable items
+        // on a seperate stage in the same class
+        menuStage = new Stage(new ScreenViewport());
+
 		final TextureRegion bubbleTexture = new TextureRegion(new Texture("bubble.png"));
-		rbg = new ParallaxBackground(new ParallaxLayer[]{
+        final TextureRegion bubbleButtonTexture = new TextureRegion(new Texture("bubblebutton.png"));
+        final TextureRegion bubbleBackButtonTexture = new TextureRegion(new Texture("bubblebackbutton.png"));
+
+        rbg = new ParallaxBackground(new ParallaxLayer[]{
 				//	new ParallaxLayer(background, new Vector2(),new Vector2(0, 0)),
 				new ParallaxLayer(background,new Vector2(1.0f,1.0f),new Vector2(0, 500)),
 				//	new ParallaxLayer(background,new Vector2(0.1f,0),new Vector2(0, stage.getViewport().getScreenHeight()-200),new Vector2(0, 0)),
@@ -195,9 +306,12 @@ public class SillyBubblesGame extends Game {
 		// random number seed
 		Random random = new Random();
 
-		// initialize arrays
+        // add a bubbleButton
+        BubbleButton bubbleButton = new BubbleButton(bubbleButtonTexture);
+        BubbleBackButton bubbleBackButton = new BubbleBackButton(bubbleBackButtonTexture);
+
+		// initialize arrays for bubbles
 		bubbles = new Bubble[bubbleCount];
-		// moveActions = new MoveToAction[bubbleCount];
 
 		// make 10 bubble objects at random on screen locations
 		for(int i = 0; i < bubbleCount; i++){
@@ -218,26 +332,41 @@ public class SillyBubblesGame extends Game {
 
 		}
 
-		Gdx.input.setInputProcessor(stage);
+        // we will button on top, because it's like a HUD
+        stage.addActor(bubbleButton);
+        menuStage.addActor(bubbleBackButton);
+
+        Gdx.input.setInputProcessor(stage);
+
 	}
 
 	@Override
 	public void dispose() {
 		stage.dispose();
+        menuStage.dispose();
 	}
 
 	@Override
 	public void render() {
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		rbg.render(Gdx.graphics.getDeltaTime());
-		stage.act(Gdx.graphics.getDeltaTime());
-		stage.draw();
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        if(playing) {
+            rbg.render(Gdx.graphics.getDeltaTime());
+            stage.act(Gdx.graphics.getDeltaTime());
+            stage.draw();
+        }
+
+        else {
+            rbg.render(Gdx.graphics.getDeltaTime());
+            menuStage.act(Gdx.graphics.getDeltaTime());
+            menuStage.draw();
+        }
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
+        menuStage.getViewport().update(width, height, true);
 		rbg = new ParallaxBackground(new ParallaxLayer[]{
 				//	new ParallaxLayer(background, new Vector2(),new Vector2(0, 0)),
 				new ParallaxLayer(background,new Vector2(1.0f,1.0f),new Vector2(0, 500)),
