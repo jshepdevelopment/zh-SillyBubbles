@@ -80,6 +80,11 @@ public class SillyBubblesGame extends Game {
             if (distance <= radius) {
                 if (Gdx.input.justTouched()) {
                         Gdx.app.log("JSLOG", "Bubble button pressed.");
+
+                        diamondLabel.setText(" " + diamondItem.getItemCount());
+                        firstAidLabel.setText(" " + firstAidItem.getItemCount());
+                        starLabel.setText(" " + starItem.getItemCount());
+
                         Gdx.input.setInputProcessor(menuStage);
                         playing = false;
                 }
@@ -209,7 +214,7 @@ public class SillyBubblesGame extends Game {
             if(distance <= radius) {
 				// check for justTouched will prevent holding hits
 				if(Gdx.input.justTouched()) {
-					Gdx.app.log("JSLOG", "bubble " + this + " hit!");
+					//Gdx.app.log("JSLOG", "bubble " + this + " hit!");
 					if(this.prizeID==1) {
 						diamondItem.itemCount++;
 						Gdx.app.log("JSLOG", diamondItem.getItemCount() + " Diamonds collected.");
@@ -366,7 +371,6 @@ public class SillyBubblesGame extends Game {
         menuStage.addActor(diamondLabel);
         menuStage.addActor(firstAidLabel);
         menuStage.addActor(starLabel);
-
         menuStage.addActor(bubbleBackButton);
 
         Gdx.input.setInputProcessor(stage);
@@ -382,9 +386,6 @@ public class SillyBubblesGame extends Game {
 	@Override
 	public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        diamondLabel = new Label("You have " + diamondItem.itemCount + " diamonds.", skin);
-        firstAidLabel = new Label("You have " + firstAidItem.itemCount + " first-aids.", skin);
-        starLabel = new Label("You have " + starItem.itemCount + " stars.", skin);
 
         if(playing) {
             rbg.render(Gdx.graphics.getDeltaTime());
@@ -413,6 +414,7 @@ public class SillyBubblesGame extends Game {
 	@Override
 	public void pause() {
 
+        // save the amount of items collected if game is paused
         Preferences prefs = Gdx.app.getPreferences("BubblePrefs");// We store the value 10 with the key of "highScore"
         prefs.putInteger(diamondItem.itemName, diamondItem.itemCount);
         prefs.putInteger(firstAidItem.itemName, firstAidItem.itemCount);
