@@ -5,9 +5,11 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -16,11 +18,11 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import java.awt.Color;
 import java.util.Random;
 
 public class SillyBubblesGame extends Game {
@@ -37,6 +39,13 @@ public class SillyBubblesGame extends Game {
     Label diamondLabel;
     Label firstAidLabel;
     Label starLabel;
+
+    //BitmapFont textFont;
+    //FileHandle fontFile = Gdx.files.internal("data/Roboto-Bold.ttf");
+    //FreeTypeFontGenerator generator = new FreeTypeFontGenerator(fontFile);
+    //FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+    //parameter.size = 12;
+    //textFont = generator.generateFont(parameter);
 
     boolean playing = true; // flag to switch between playing and checking items
 
@@ -290,6 +299,12 @@ public class SillyBubblesGame extends Game {
 	@Override
 	public void create() {
 
+        //Texture diamondTexture, firstAidTexture, starTexture;
+        //Sprite diamondSprite, firstAidSprite, starSprite;
+        Image diamondImage = new Image(new TextureRegion((new Texture("diamond.png"))));
+        Image firstAidImage = new Image(new TextureRegion((new Texture("firstaid.png"))));
+        Image starImage = new Image(new TextureRegion((new Texture("star.png"))));
+
         Preferences prefs = Gdx.app.getPreferences("BubblePrefs"); // load the prefs file
         diamondItem.itemCount = prefs.getInteger(diamondItem.itemName);
         firstAidItem.itemCount = prefs.getInteger(firstAidItem.itemName);
@@ -303,13 +318,20 @@ public class SillyBubblesGame extends Game {
 
         //testLabel.setWidth(500f);
         //testLabel.setHeight(500f);
-        diamondLabel.setFontScale(5f);
-        firstAidLabel.setFontScale(5f);
-        starLabel.setFontScale(5f);
+        diamondLabel.setFontScale(8f);
+        firstAidLabel.setFontScale(8f);
+        starLabel.setFontScale(8f);
 
-        diamondLabel.setPosition(0, Gdx.graphics.getHeight() - diamondLabel.getHeight()*16);
-        firstAidLabel.setPosition(0,Gdx.graphics.getHeight() - diamondLabel.getHeight()*16 - diamondLabel.getHeight()*8 );
-        starLabel.setPosition(0,Gdx.graphics.getHeight() - diamondLabel.getHeight()*16 - diamondLabel.getHeight()*16);
+        diamondImage.setScale(5f, 5f);
+        diamondImage.setPosition(0, Gdx.graphics.getHeight() -  diamondLabel.getHeight()*16);
+        firstAidImage.setScale(5f,5f);
+        firstAidImage.setPosition(0, Gdx.graphics.getHeight() - firstAidLabel.getHeight()*16 - firstAidLabel.getHeight()*8 );
+        starImage.setScale(5f, 5f);
+        starImage.setPosition(0, Gdx.graphics.getHeight() - starLabel.getHeight()*16 - starLabel.getHeight()*16);
+
+        diamondLabel.setPosition(diamondImage.getWidth()*5, Gdx.graphics.getHeight() - diamondLabel.getHeight()*16 + diamondImage.getHeight()*2);
+        firstAidLabel.setPosition(firstAidImage.getWidth()*5, Gdx.graphics.getHeight() - firstAidLabel.getHeight()*16 - firstAidLabel.getHeight()*8 + firstAidImage.getHeight()*2);
+        starLabel.setPosition(starImage.getWidth() * 5, Gdx.graphics.getHeight() - starLabel.getHeight() * 16 - starLabel.getHeight() * 16 + starImage.getHeight()*2);
 
         //testLabel.setPosition(Gdx.graphics.getWidth() - testLabel.getWidth(),
         //        Gdx.graphics.getHeight()- testLabel.getHeight());
@@ -368,6 +390,13 @@ public class SillyBubblesGame extends Game {
         // we will button on top, because it's like a HUD
         stage.addActor(bubbleButton);
 
+        // menuStage shows a list of collected items
+        // images
+        menuStage.addActor(diamondImage);
+        menuStage.addActor(firstAidImage);
+        menuStage.addActor(starImage);
+
+        // count
         menuStage.addActor(diamondLabel);
         menuStage.addActor(firstAidLabel);
         menuStage.addActor(starLabel);
