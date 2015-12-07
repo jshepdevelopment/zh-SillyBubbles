@@ -4,13 +4,14 @@ package com.sillybubbles.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -40,12 +41,9 @@ public class SillyBubblesGame extends Game {
     Label firstAidLabel;
     Label starLabel;
 
-    //BitmapFont textFont;
-    //FileHandle fontFile = Gdx.files.internal("data/Roboto-Bold.ttf");
-    //FreeTypeFontGenerator generator = new FreeTypeFontGenerator(fontFile);
-    //FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-    //parameter.size = 12;
-    //textFont = generator.generateFont(parameter);
+    BitmapFont textFont;
+    //FileHandle fontFile = Gdx.files.internal("comicsans.ttf");
+
 
     boolean playing = true; // flag to switch between playing and checking items
 
@@ -292,12 +290,21 @@ public class SillyBubblesGame extends Game {
 		}
 	}
 
-
 	private Stage stage;
     private Stage menuStage;
 
 	@Override
 	public void create() {
+
+        // setting up fonts
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("cartoon.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 126;
+        parameter.borderColor = Color.BLACK;
+        parameter.borderWidth = 3;
+        textFont = generator.generateFont(parameter);
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle(textFont, Color.WHITE);
 
         //Texture diamondTexture, firstAidTexture, starTexture;
         //Sprite diamondSprite, firstAidSprite, starSprite;
@@ -310,28 +317,26 @@ public class SillyBubblesGame extends Game {
         firstAidItem.itemCount = prefs.getInteger(firstAidItem.itemName);
         starItem.itemCount = prefs.getInteger(starItem.itemName);
 
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        diamondLabel = new Label("You have " + diamondItem.itemCount + " diamonds.", labelStyle);
+        firstAidLabel = new Label("You have " + firstAidItem.itemCount + " first-aids.", labelStyle);
+        starLabel = new Label("You have " + starItem.itemCount + " stars.", labelStyle);
 
-        diamondLabel = new Label("You have " + diamondItem.itemCount + " diamonds.", skin);
-        firstAidLabel = new Label("You have " + firstAidItem.itemCount + " first-aids.", skin);
-        starLabel = new Label("You have " + starItem.itemCount + " stars.", skin);
 
-        //testLabel.setWidth(500f);
-        //testLabel.setHeight(500f);
-        diamondLabel.setFontScale(8f);
-        firstAidLabel.setFontScale(8f);
-        starLabel.setFontScale(8f);
+        //diamondLabel.setFontScale(8f);
+
+        //firstAidLabel.setFontScale(8f);
+        //starLabel.setFontScale(8f);
 
         diamondImage.setScale(5f, 5f);
-        diamondImage.setPosition(0, Gdx.graphics.getHeight() -  diamondLabel.getHeight()*16);
+        diamondImage.setPosition(0, Gdx.graphics.getHeight() -  diamondImage.getHeight()*16);
         firstAidImage.setScale(5f,5f);
-        firstAidImage.setPosition(0, Gdx.graphics.getHeight() - firstAidLabel.getHeight()*16 - firstAidLabel.getHeight()*8 );
+        firstAidImage.setPosition(0, Gdx.graphics.getHeight() - firstAidImage.getHeight()*16 - firstAidImage.getHeight()*8 );
         starImage.setScale(5f, 5f);
-        starImage.setPosition(0, Gdx.graphics.getHeight() - starLabel.getHeight()*16 - starLabel.getHeight()*16);
+        starImage.setPosition(0, Gdx.graphics.getHeight() - starImage.getHeight()*16 - starImage.getHeight()*16);
 
-        diamondLabel.setPosition(diamondImage.getWidth()*5, Gdx.graphics.getHeight() - diamondLabel.getHeight()*16 + diamondImage.getHeight()*2);
-        firstAidLabel.setPosition(firstAidImage.getWidth()*5, Gdx.graphics.getHeight() - firstAidLabel.getHeight()*16 - firstAidLabel.getHeight()*8 + firstAidImage.getHeight()*2);
-        starLabel.setPosition(starImage.getWidth() * 5, Gdx.graphics.getHeight() - starLabel.getHeight() * 16 - starLabel.getHeight() * 16 + starImage.getHeight()*2);
+        diamondLabel.setPosition(diamondImage.getWidth()*5, Gdx.graphics.getHeight() - diamondImage.getHeight()*16);
+        firstAidLabel.setPosition(firstAidImage.getWidth()*5, Gdx.graphics.getHeight() - firstAidImage.getHeight()*16 - firstAidImage.getHeight()*8);
+        starLabel.setPosition(starImage.getWidth() * 5, Gdx.graphics.getHeight() - starImage.getHeight() * 16 - starImage.getHeight() * 16);
 
         //testLabel.setPosition(Gdx.graphics.getWidth() - testLabel.getWidth(),
         //        Gdx.graphics.getHeight()- testLabel.getHeight());
