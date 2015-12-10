@@ -4,7 +4,6 @@ package com.sillybubbles.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -18,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -32,18 +30,21 @@ public class SillyBubblesGame extends Game {
 	PrizeItem diamondItem = new PrizeItem("Diamond", 0);
 	PrizeItem firstAidItem = new PrizeItem("First Aid", 0);
 	PrizeItem starItem = new PrizeItem("Star", 0);
-	TextureRegion background;
-	ParallaxBackground rbg;
-
-    private Skin skin;
+    PrizeItem bookItem = new PrizeItem("Book", 0);
+    PrizeItem crystalItem = new PrizeItem("Crystal", 0);
+    PrizeItem ringItem = new PrizeItem("Ring", 0);
 
     Label diamondLabel;
     Label firstAidLabel;
     Label starLabel;
+    Label bookLabel;
+    Label crystalLabel;
+    Label ringLabel;
+
+	TextureRegion background;
+	ParallaxBackground rbg;
 
     BitmapFont textFont;
-    //FileHandle fontFile = Gdx.files.internal("comicsans.ttf");
-
 
     boolean playing = true; // flag to switch between playing and checking items
 
@@ -91,6 +92,9 @@ public class SillyBubblesGame extends Game {
                         diamondLabel.setText(" " + diamondItem.getItemCount());
                         firstAidLabel.setText(" " + firstAidItem.getItemCount());
                         starLabel.setText(" " + starItem.getItemCount());
+                        bookLabel.setText(" " + bookItem.getItemCount());
+                        crystalLabel.setText(" " + crystalItem.getItemCount());
+                        ringLabel.setText(" " + ringItem.getItemCount());
 
                         Gdx.input.setInputProcessor(menuStage);
                         playing = false;
@@ -163,16 +167,28 @@ public class SillyBubblesGame extends Game {
 	// create Bubble as an Actor and show the texture region
 	class Bubble extends Actor {
 
-		private TextureRegion _texture;
+		private TextureRegion texture;
 		private TextureRegion prizeTexture;
 		int prizeID = 0;
 		int speed = 0;
 
-		public Bubble(TextureRegion texture){
+		public Bubble(){
 
-			// set bounds
-			_texture = texture;
-			setBounds(getX(), getY(), _texture.getRegionWidth(), _texture.getRegionHeight());
+            Random random = new Random();
+            int randomBubble = random.nextInt(8) + 1;
+
+            // set a random texture
+            if (randomBubble == 1) texture = new TextureRegion(new Texture("bubblewhite.png"));
+            if (randomBubble == 2) texture = new TextureRegion(new Texture("bubbleblack.png"));
+            if (randomBubble == 3) texture = new TextureRegion(new Texture("bubbleblue.png"));
+            if (randomBubble == 4) texture = new TextureRegion(new Texture("bubblegreen.png"));
+            if (randomBubble == 5) texture = new TextureRegion(new Texture("bubbleorange.png"));
+            if (randomBubble == 6) texture = new TextureRegion(new Texture("bubblepurple.png"));
+            if (randomBubble == 7) texture = new TextureRegion(new Texture("bubblered.png"));
+            if (randomBubble == 8) texture = new TextureRegion(new Texture("bubbleyellow.png"));
+
+            // set bounds
+            setBounds(getX(), getY(), texture.getRegionWidth(), texture.getRegionHeight());
 
 			// get input
 			this.addListener(new InputListener() {
@@ -187,11 +203,11 @@ public class SillyBubblesGame extends Game {
 		// implements draw() completely to handle rotation and scaling
 		public void draw(Batch batch, float alpha) {
 			batch.draw(prizeTexture,
-					getX() + getScaleX() * 110,
-					getY() + getScaleY() * 120, getOriginX(), getOriginY(),
+					getX() + getScaleX() * 80,
+					getY() + getScaleY() * 80, getOriginX(), getOriginY(),
 					getWidth() / 2, getHeight() / 2, getScaleX(), getScaleY(), getRotation());
 
-			batch.draw(_texture, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
+			batch.draw(texture, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
 					getScaleX(), getScaleY(), getRotation());
 		}
 
@@ -234,6 +250,18 @@ public class SillyBubblesGame extends Game {
 						starItem.itemCount++;
 						Gdx.app.log("JSLOG", starItem.getItemCount() + " Stars collected.");
 					}
+                    if(this.prizeID==4) {
+                        bookItem.itemCount++;
+                        Gdx.app.log("JSLOG", bookItem.getItemCount() + " Books collected.");
+                    }
+                    if(this.prizeID==5) {
+                        crystalItem.itemCount++;
+                        Gdx.app.log("JSLOG", crystalItem.getItemCount() + " Crystals collected.");
+                    }
+                    if(this.prizeID==6) {
+                        ringItem.itemCount++;
+                        Gdx.app.log("JSLOG", ringItem.getItemCount() + " Rings collected.");
+                    }
 					this.reset();
 				}
 				return this;
@@ -246,9 +274,8 @@ public class SillyBubblesGame extends Game {
 		public void act(float delta){
 
 			this.setPosition(this.getX(), this.getY() + this.speed);
-			//Gdx.app.log("JSLOG", "this.getY() " + this.getY() + " this.getX() " + this.getX());
 
-			if(this.getY() > Gdx.graphics.getHeight() + _texture.getRegionHeight()) {
+			if(this.getY() > Gdx.graphics.getHeight() + texture.getRegionHeight()) {
 				this.reset();
 			}
 		}
@@ -256,7 +283,7 @@ public class SillyBubblesGame extends Game {
 		public void reset() {
 
 			Random random = new Random();
-			int randomPrize = random.nextInt(10) + 1;
+			int randomPrize = random.nextInt(20) + 1;
 
 			// set prize
 			if (randomPrize == 1) {
@@ -271,21 +298,29 @@ public class SillyBubblesGame extends Game {
 				this.prizeTexture = new TextureRegion(new Texture("star.png"));
 				prizeID = 3;
 			}
-			if (randomPrize > 3) {
-				this.prizeTexture = new TextureRegion(new Texture("empty.png"));
-				prizeID = 0;// no prize ID is no prize
-			}
+            if (randomPrize == 4) {
+                this.prizeTexture = new TextureRegion(new Texture("book.png"));
+                this.prizeID = 4;
+            }
+            if (randomPrize == 5) {
+                this.prizeTexture = new TextureRegion(new Texture("crystal.png"));
+                this.prizeID = 5;
+            }
+            if (randomPrize == 6) {
+                this.prizeTexture = new TextureRegion(new Texture("ring.png"));
+                prizeID = 6;
+            }
+            if (randomPrize > 6) {
+                this.prizeTexture = new TextureRegion(new Texture("empty.png"));
+                prizeID = 0;// no prize ID is no prize
+            }
 
-			//Assign the position of the bubble to a random value within the screen boundaries
+            //Assign the position of the bubble to a random value within the screen boundaries
 			int randomX = random.nextInt(Gdx.graphics.getWidth());
 			this.setVisible(true);
 			//this.setScale(random.nextFloat());
 			this.speed =  random.nextInt(20) + 10;
 			this.setPosition(randomX, -3000);
-
-			//Gdx.app.log("JSLOG", "diamondItem.itemCount " + diamondItem.itemCount);
-			//Gdx.app.log("JSLOG", "firstAidItem.itemCount " + firstAidItem.itemCount);
-			//Gdx.app.log("JSLOG", "starItem.itemCount " + starItem.itemCount);
 
 		}
 	}
@@ -296,50 +331,60 @@ public class SillyBubblesGame extends Game {
 	@Override
 	public void create() {
 
-        // setting up fonts
+        // setting up font
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("cartoon.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 126;
+        parameter.size = 72;
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 3;
         textFont = generator.generateFont(parameter);
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(textFont, Color.WHITE);
-
-        //Texture diamondTexture, firstAidTexture, starTexture;
-        //Sprite diamondSprite, firstAidSprite, starSprite;
-        Image diamondImage = new Image(new TextureRegion((new Texture("diamond.png"))));
-        Image firstAidImage = new Image(new TextureRegion((new Texture("firstaid.png"))));
-        Image starImage = new Image(new TextureRegion((new Texture("star.png"))));
-
         Preferences prefs = Gdx.app.getPreferences("BubblePrefs"); // load the prefs file
+
         diamondItem.itemCount = prefs.getInteger(diamondItem.itemName);
         firstAidItem.itemCount = prefs.getInteger(firstAidItem.itemName);
         starItem.itemCount = prefs.getInteger(starItem.itemName);
+        bookItem.itemCount = prefs.getInteger(bookItem.itemName);
+        crystalItem.itemCount = prefs.getInteger(crystalItem.itemName);
+        ringItem.itemCount = prefs.getInteger(ringItem.itemName);
 
-        diamondLabel = new Label("You have " + diamondItem.itemCount + " diamonds.", labelStyle);
-        firstAidLabel = new Label("You have " + firstAidItem.itemCount + " first-aids.", labelStyle);
-        starLabel = new Label("You have " + starItem.itemCount + " stars.", labelStyle);
+        // Item images used in menu screen
+        Image diamondImage = new Image(new TextureRegion((new Texture("diamond.png"))));
+        Image firstAidImage = new Image(new TextureRegion((new Texture("firstaid.png"))));
+        Image starImage = new Image(new TextureRegion((new Texture("star.png"))));
+        Image bookImage = new Image(new TextureRegion((new Texture("book.png"))));
+        Image crystalImage = new Image(new TextureRegion((new Texture("crystal.png"))));
+        Image ringImage = new Image(new TextureRegion((new Texture("ring.png"))));
 
+        diamondImage.setScale(2.5f, 2.5f);
+        firstAidImage.setScale(2.5f, 2.5f);
+        starImage.setScale(2.5f, 2.5f);
+        bookImage.setScale(2.5f, 2.5f);
+        crystalImage.setScale(2.5f, 2.5f);
+        ringImage.setScale(2.5f, 2.5f);
 
-        //diamondLabel.setFontScale(8f);
+        diamondImage.setPosition(0, Gdx.graphics.getHeight() - diamondImage.getHeight() * 16);
+        firstAidImage.setPosition(0, Gdx.graphics.getHeight() - firstAidImage.getHeight() * 16 - firstAidImage.getHeight() * 8);
+        starImage.setPosition(0, Gdx.graphics.getHeight() - starImage.getHeight() * 16 - starImage.getHeight() * 16);
+        bookImage.setPosition(0, Gdx.graphics.getHeight() - bookImage.getHeight() * 16);
+        crystalImage.setPosition(0, Gdx.graphics.getHeight() - crystalImage.getHeight() * 16 - firstAidImage.getHeight() * 8);
+        ringImage.setPosition(0, Gdx.graphics.getHeight() - ringImage.getHeight() * 16 - starImage.getHeight() * 16);
 
-        //firstAidLabel.setFontScale(8f);
-        //starLabel.setFontScale(8f);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(textFont, Color.WHITE);
 
-        diamondImage.setScale(5f, 5f);
-        diamondImage.setPosition(0, Gdx.graphics.getHeight() -  diamondImage.getHeight()*16);
-        firstAidImage.setScale(5f,5f);
-        firstAidImage.setPosition(0, Gdx.graphics.getHeight() - firstAidImage.getHeight()*16 - firstAidImage.getHeight()*8 );
-        starImage.setScale(5f, 5f);
-        starImage.setPosition(0, Gdx.graphics.getHeight() - starImage.getHeight()*16 - starImage.getHeight()*16);
+        diamondLabel = new Label(" " + diamondItem.itemCount, labelStyle);
+        firstAidLabel = new Label("  " + firstAidItem.itemCount, labelStyle);
+        starLabel = new Label(" " + starItem.itemCount, labelStyle);
+        bookLabel = new Label(" " + bookItem.itemCount, labelStyle);
+        crystalLabel = new Label("  " + crystalItem.itemCount, labelStyle);
+        ringLabel = new Label(" " + ringItem.itemCount, labelStyle);
 
         diamondLabel.setPosition(diamondImage.getWidth()*5, Gdx.graphics.getHeight() - diamondImage.getHeight()*16);
         firstAidLabel.setPosition(firstAidImage.getWidth()*5, Gdx.graphics.getHeight() - firstAidImage.getHeight()*16 - firstAidImage.getHeight()*8);
         starLabel.setPosition(starImage.getWidth() * 5, Gdx.graphics.getHeight() - starImage.getHeight() * 16 - starImage.getHeight() * 16);
-
-        //testLabel.setPosition(Gdx.graphics.getWidth() - testLabel.getWidth(),
-        //        Gdx.graphics.getHeight()- testLabel.getHeight());
+        bookLabel.setPosition(diamondImage.getWidth()*5, Gdx.graphics.getHeight() - bookImage.getHeight()*16);
+        crystalLabel.setPosition(firstAidImage.getWidth()*5, Gdx.graphics.getHeight() - crystalImage.getHeight()*16 - crystalImage.getHeight()*8);
+        ringLabel.setPosition(starImage.getWidth() * 5, Gdx.graphics.getHeight() - ringImage.getHeight() * 16 - ringImage.getHeight() * 16);
 
         background = new TextureRegion(new Texture("hills.png"));
 
@@ -353,7 +398,7 @@ public class SillyBubblesGame extends Game {
         // on a seperate stage in the same class
         menuStage = new Stage(new ScreenViewport());
 
-		final TextureRegion bubbleTexture = new TextureRegion(new Texture("bubble.png"));
+		// button textutes
         final TextureRegion bubbleButtonTexture = new TextureRegion(new Texture("bubblebutton.png"));
         final TextureRegion bubbleBackButtonTexture = new TextureRegion(new Texture("bubblebackbutton.png"));
 
@@ -375,17 +420,16 @@ public class SillyBubblesGame extends Game {
 
 		// make 10 bubble objects at random on screen locations
 		for(int i = 0; i < bubbleCount; i++){
-			bubbles[i] = new Bubble(bubbleTexture);
+			bubbles[i] = new Bubble();
 			//moveActions[i] = new MoveToAction();
-
-			// random.nextInt(Gdx.graphics.getWidth());
+            			// random.nextInt(Gdx.graphics.getWidth());
 			bubbles[i].setScale(random.nextFloat() * 2);
 			bubbles[i].speed =  random.nextInt(20) + 10;
 			bubbles[i].setPosition(bubbles[i].getX(), -3000);
 
 			// set the name of the bubble to it's index within the loop
 			bubbles[i].setName(Integer.toString(i));
-			bubbles[i].reset();
+            bubbles[i].reset();
 
 			// add to the stage
 			stage.addActor(bubbles[i]);
@@ -400,11 +444,17 @@ public class SillyBubblesGame extends Game {
         menuStage.addActor(diamondImage);
         menuStage.addActor(firstAidImage);
         menuStage.addActor(starImage);
+        menuStage.addActor(bookImage);
+        menuStage.addActor(crystalImage);
+        menuStage.addActor(ringImage);
 
         // count
         menuStage.addActor(diamondLabel);
         menuStage.addActor(firstAidLabel);
         menuStage.addActor(starLabel);
+        menuStage.addActor(bookLabel);
+        menuStage.addActor(crystalLabel);
+        menuStage.addActor(ringLabel);
         menuStage.addActor(bubbleBackButton);
 
         Gdx.input.setInputProcessor(stage);
@@ -435,7 +485,7 @@ public class SillyBubblesGame extends Game {
 	}
 
 	@Override
-	public void resize(int width, int height) {
+    public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
         menuStage.getViewport().update(width, height, true);
 		rbg = new ParallaxBackground(new ParallaxLayer[]{
@@ -453,12 +503,13 @@ public class SillyBubblesGame extends Game {
         prefs.putInteger(diamondItem.itemName, diamondItem.itemCount);
         prefs.putInteger(firstAidItem.itemName, firstAidItem.itemCount);
         prefs.putInteger(starItem.itemName, starItem.itemCount);
+        prefs.putInteger(bookItem.itemName, bookItem.itemCount);
+        prefs.putInteger(crystalItem.itemName, crystalItem.itemCount);
+        prefs.putInteger(ringItem.itemName, ringItem.itemCount);
         prefs.flush(); // saves the preferences file
 
         Gdx.app.log("JSLOG", "Game Paused.");
-		Gdx.app.log("JSLOG", "You have " + diamondItem.getItemCount() + " diamonds.");
-		Gdx.app.log("JSLOG", "You have " + firstAidItem.getItemCount() + " first-aids.");
-		Gdx.app.log("JSLOG", "You have " + starItem.getItemCount() + " stars.");
+		//Gdx.app.log("JSLOG", "You have " + diamondItem.getItemCount() + " diamonds.");
 
 	}
 
