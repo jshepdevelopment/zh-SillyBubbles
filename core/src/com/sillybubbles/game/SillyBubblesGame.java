@@ -26,6 +26,10 @@ import java.util.Random;
 
 public class SillyBubblesGame extends Game {
 
+    final int ITEMCOUNT = 6;
+    final int itemWidth = 32;
+    final int itemHeight = 32;
+
 	// create the items and count
 	PrizeItem diamondItem = new PrizeItem("Diamond", 0);
 	PrizeItem firstAidItem = new PrizeItem("First Aid", 0);
@@ -363,12 +367,7 @@ public class SillyBubblesGame extends Game {
         crystalImage.setScale(2.5f, 2.5f);
         ringImage.setScale(2.5f, 2.5f);
 
-        diamondImage.setPosition(0, Gdx.graphics.getHeight() - diamondImage.getHeight() * 16);
-        firstAidImage.setPosition(0, Gdx.graphics.getHeight() - firstAidImage.getHeight() * 16 - firstAidImage.getHeight() * 8);
-        starImage.setPosition(0, Gdx.graphics.getHeight() - starImage.getHeight() * 16 - starImage.getHeight() * 16);
-        bookImage.setPosition(0, Gdx.graphics.getHeight() - bookImage.getHeight() * 16);
-        crystalImage.setPosition(0, Gdx.graphics.getHeight() - crystalImage.getHeight() * 16 - firstAidImage.getHeight() * 8);
-        ringImage.setPosition(0, Gdx.graphics.getHeight() - ringImage.getHeight() * 16 - starImage.getHeight() * 16);
+
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(textFont, Color.WHITE);
 
@@ -379,12 +378,18 @@ public class SillyBubblesGame extends Game {
         crystalLabel = new Label("  " + crystalItem.itemCount, labelStyle);
         ringLabel = new Label(" " + ringItem.itemCount, labelStyle);
 
-        diamondLabel.setPosition(diamondImage.getWidth()*5, Gdx.graphics.getHeight() - diamondImage.getHeight()*16);
-        firstAidLabel.setPosition(firstAidImage.getWidth()*5, Gdx.graphics.getHeight() - firstAidImage.getHeight()*16 - firstAidImage.getHeight()*8);
-        starLabel.setPosition(starImage.getWidth() * 5, Gdx.graphics.getHeight() - starImage.getHeight() * 16 - starImage.getHeight() * 16);
-        bookLabel.setPosition(diamondImage.getWidth()*5, Gdx.graphics.getHeight() - bookImage.getHeight()*16);
-        crystalLabel.setPosition(firstAidImage.getWidth()*5, Gdx.graphics.getHeight() - crystalImage.getHeight()*16 - crystalImage.getHeight()*8);
-        ringLabel.setPosition(starImage.getWidth() * 5, Gdx.graphics.getHeight() - ringImage.getHeight() * 16 - ringImage.getHeight() * 16);
+        diamondImage.setPosition(0, Gdx.graphics.getHeight() - 128*3);
+        diamondLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 128*3);
+        firstAidImage.setPosition(0, Gdx.graphics.getHeight() - 160*3);
+        firstAidLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 160*3);
+        starImage.setPosition(0, Gdx.graphics.getHeight() - 192*3);
+        starLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 192*3);
+        bookImage.setPosition(0, Gdx.graphics.getHeight() - 224*3);
+        bookLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 224*3);
+        crystalImage.setPosition(0, Gdx.graphics.getHeight() - 256*3);
+        crystalLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 256*3);
+        ringImage.setPosition(0, Gdx.graphics.getHeight() - 288*3);
+        ringLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 288*3);
 
         background = new TextureRegion(new Texture("hills.png"));
 
