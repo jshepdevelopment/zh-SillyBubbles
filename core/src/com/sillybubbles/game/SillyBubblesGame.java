@@ -7,6 +7,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -26,7 +27,7 @@ import java.util.Random;
 
 public class SillyBubblesGame extends Game {
 
-    final int ITEMCOUNT = 6;
+
     final int itemWidth = 32;
     final int itemHeight = 32;
 
@@ -158,6 +159,7 @@ public class SillyBubblesGame extends Game {
                     playing = true;
                 }
             }
+
             // button not pressed, return null
             return null;
         }
@@ -173,6 +175,8 @@ public class SillyBubblesGame extends Game {
 
 		private TextureRegion texture;
 		private TextureRegion prizeTexture;
+        boolean poof = false; // used to 'pop' the bubble
+        int scaleModifier = 0; // used to score the scale of the bubble for 'pop'
 		int prizeID = 0;
 		int speed = 0;
 
@@ -182,17 +186,19 @@ public class SillyBubblesGame extends Game {
             int randomBubble = random.nextInt(8) + 1;
 
             // set a random texture
-            if (randomBubble == 1) texture = new TextureRegion(new Texture("bubblewhite.png"));
-            if (randomBubble == 2) texture = new TextureRegion(new Texture("bubbleblack.png"));
-            if (randomBubble == 3) texture = new TextureRegion(new Texture("bubbleblue.png"));
-            if (randomBubble == 4) texture = new TextureRegion(new Texture("bubblegreen.png"));
-            if (randomBubble == 5) texture = new TextureRegion(new Texture("bubbleorange.png"));
-            if (randomBubble == 6) texture = new TextureRegion(new Texture("bubblepurple.png"));
-            if (randomBubble == 7) texture = new TextureRegion(new Texture("bubblered.png"));
-            if (randomBubble == 8) texture = new TextureRegion(new Texture("bubbleyellow.png"));
+            if (randomBubble == 1) this.texture = new TextureRegion(new Texture("bubblewhite.png"));
+            if (randomBubble == 2) this.texture = new TextureRegion(new Texture("bubbleblack.png"));
+            if (randomBubble == 3) this.texture = new TextureRegion(new Texture("bubbleblue.png"));
+            if (randomBubble == 4) this.texture = new TextureRegion(new Texture("bubblegreen.png"));
+            if (randomBubble == 5) this.texture = new TextureRegion(new Texture("bubbleorange.png"));
+            if (randomBubble == 6) this.texture = new TextureRegion(new Texture("bubblepurple.png"));
+            if (randomBubble == 7) this.texture = new TextureRegion(new Texture("bubblered.png"));
+            if (randomBubble == 8) this.texture = new TextureRegion(new Texture("bubbleyellow.png"));
 
             // set bounds
-            setBounds(getX(), getY(), texture.getRegionWidth(), texture.getRegionHeight());
+            this.setBounds(getX(), getY(), texture.getRegionWidth(), texture.getRegionHeight());
+            //this.scaleModifier = random.nextInt() * 2;
+            this.setScale(random.nextFloat() * 2);
 
 			// get input
 			this.addListener(new InputListener() {
@@ -206,7 +212,8 @@ public class SillyBubblesGame extends Game {
 
 		// implements draw() completely to handle rotation and scaling
 		public void draw(Batch batch, float alpha) {
-			batch.draw(prizeTexture,
+
+            batch.draw(prizeTexture,
 					getX() + getScaleX() * 80,
 					getY() + getScaleY() * 80, getOriginX(), getOriginY(),
 					getWidth() / 2, getHeight() / 2, getScaleX(), getScaleY(), getRotation());
@@ -266,7 +273,9 @@ public class SillyBubblesGame extends Game {
                         ringItem.itemCount++;
                         Gdx.app.log("JSLOG", ringItem.getItemCount() + " Rings collected.");
                     }
-					this.reset();
+                    // pop the bubble
+                    this.poof = true;
+					//this.reset();
 				}
 				return this;
 			}
@@ -277,14 +286,35 @@ public class SillyBubblesGame extends Game {
 		@Override
 		public void act(float delta){
 
-			this.setPosition(this.getX(), this.getY() + this.speed);
+            if(!this.poof) {
+                this.setPosition(this.getX(), this.getY() + this.speed);
+            }
+            if(this.poof) {
+                this.setPosition(this.getX(), this.getY() + 0);
+//                this.setScale(this.scaleModifier, this.scaleModifier);
+                this.scaleModifier++;
+//                Gdx.app.log("JSLOG", "this.scaleModifier is " + this.scaleModifier);
+                if(this.scaleModifier >= 25) {
+//                    this.poof = false;
+                    this.scaleModifier = 0;
+                    this.reset();
+                }
+                //this.setWidth(getWidth() * scaleModifier);
+                //this.setScale(this.getScaleX() * this.scaleModifier, this.getScaleY() * this.scaleModifier);
 
-			if(this.getY() > Gdx.graphics.getHeight() + texture.getRegionHeight()) {
+                //this.poof = false;
+                //this.reset();
+            }
+
+            // if the bubble wanders to far up the y axis, reset it
+            if(this.getY() > Gdx.graphics.getHeight() + texture.getRegionHeight()) {
 				this.reset();
 			}
 		}
 
 		public void reset() {
+
+            this.poof = false;
 
 			Random random = new Random();
 			int randomPrize = random.nextInt(20) + 1;
@@ -321,10 +351,24 @@ public class SillyBubblesGame extends Game {
 
             //Assign the position of the bubble to a random value within the screen boundaries
 			int randomX = random.nextInt(Gdx.graphics.getWidth());
-			this.setVisible(true);
+			//this.setVisible(true);
 			//this.setScale(random.nextFloat());
 			this.speed =  random.nextInt(20) + 10;
 			this.setPosition(randomX, -3000);
+
+            int randomBubble = random.nextInt(8) + 1;
+
+            Gdx.app.log("JSLOG", "Random bubble color " + randomBubble + " set.");
+
+            // set a random texture
+            if (randomBubble == 1) this.texture = new TextureRegion(new Texture("bubblewhite.png"));
+            if (randomBubble == 2) this.texture = new TextureRegion(new Texture("bubbleblack.png"));
+            if (randomBubble == 3) this.texture = new TextureRegion(new Texture("bubbleblue.png"));
+            if (randomBubble == 4) this.texture = new TextureRegion(new Texture("bubblegreen.png"));
+            if (randomBubble == 5) this.texture = new TextureRegion(new Texture("bubbleorange.png"));
+            if (randomBubble == 6) this.texture = new TextureRegion(new Texture("bubblepurple.png"));
+            if (randomBubble == 7) this.texture = new TextureRegion(new Texture("bubblered.png"));
+            if (randomBubble == 8) this.texture = new TextureRegion(new Texture("bubbleyellow.png"));
 
 		}
 	}
@@ -366,8 +410,6 @@ public class SillyBubblesGame extends Game {
         bookImage.setScale(2.5f, 2.5f);
         crystalImage.setScale(2.5f, 2.5f);
         ringImage.setScale(2.5f, 2.5f);
-
-
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(textFont, Color.WHITE);
 
@@ -428,7 +470,6 @@ public class SillyBubblesGame extends Game {
 			bubbles[i] = new Bubble();
 			//moveActions[i] = new MoveToAction();
             			// random.nextInt(Gdx.graphics.getWidth());
-			bubbles[i].setScale(random.nextFloat() * 2);
 			bubbles[i].speed =  random.nextInt(20) + 10;
 			bubbles[i].setPosition(bubbles[i].getX(), -3000);
 
