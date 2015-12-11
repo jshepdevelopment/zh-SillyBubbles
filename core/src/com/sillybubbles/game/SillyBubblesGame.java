@@ -7,7 +7,6 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -20,7 +19,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.Random;
@@ -38,6 +36,9 @@ public class SillyBubblesGame extends Game {
     PrizeItem bookItem = new PrizeItem("Book", 0);
     PrizeItem crystalItem = new PrizeItem("Crystal", 0);
     PrizeItem ringItem = new PrizeItem("Ring", 0);
+    PrizeItem jewel1Item = new PrizeItem("Jewel1", 0);
+    PrizeItem jewel2Item = new PrizeItem("Jewel2", 0);
+    PrizeItem jewel3Item = new PrizeItem("Jewel3", 0);
 
     Label diamondLabel;
     Label firstAidLabel;
@@ -45,6 +46,9 @@ public class SillyBubblesGame extends Game {
     Label bookLabel;
     Label crystalLabel;
     Label ringLabel;
+    Label jewel1Label;
+    Label jewel2Label;
+    Label jewel3Label;
 
 	TextureRegion background;
 	ParallaxBackground rbg;
@@ -100,6 +104,9 @@ public class SillyBubblesGame extends Game {
                         bookLabel.setText(" " + bookItem.getItemCount());
                         crystalLabel.setText(" " + crystalItem.getItemCount());
                         ringLabel.setText(" " + ringItem.getItemCount());
+                        jewel1Label.setText(" " + jewel1Item.getItemCount());
+                        jewel2Label.setText(" " + jewel2Item.getItemCount());
+                        jewel3Label.setText(" " + jewel3Item.getItemCount());
 
                         Gdx.input.setInputProcessor(menuStage);
                         playing = false;
@@ -273,6 +280,18 @@ public class SillyBubblesGame extends Game {
                         ringItem.itemCount++;
                         Gdx.app.log("JSLOG", ringItem.getItemCount() + " Rings collected.");
                     }
+                    if(this.prizeID==7) {
+                        jewel1Item.itemCount++;
+                        Gdx.app.log("JSLOG", jewel1Item.getItemCount() + " Jewel1s collected.");
+                    }
+                    if(this.prizeID==8) {
+                        jewel2Item.itemCount++;
+                        Gdx.app.log("JSLOG", jewel2Item.getItemCount() + " Jewel2s collected.");
+                    }
+                    if(this.prizeID==9) {
+                        jewel3Item.itemCount++;
+                        Gdx.app.log("JSLOG", jewel3Item.getItemCount() + " Jewel3s collected.");
+                    }
                     // pop the bubble
                     this.poof = true;
 					//this.reset();
@@ -344,7 +363,20 @@ public class SillyBubblesGame extends Game {
                 this.prizeTexture = new TextureRegion(new Texture("ring.png"));
                 prizeID = 6;
             }
-            if (randomPrize > 6) {
+
+            if (randomPrize == 7) {
+                this.prizeTexture = new TextureRegion(new Texture("jewel1.png"));
+                prizeID = 7;
+            }
+            if (randomPrize == 8) {
+                this.prizeTexture = new TextureRegion(new Texture("jewel2.png"));
+                prizeID = 8;
+            }
+            if (randomPrize == 9) {
+                this.prizeTexture = new TextureRegion(new Texture("jewel3.png"));
+                prizeID = 9;
+            }
+            if (randomPrize > 9) {
                 this.prizeTexture = new TextureRegion(new Texture("empty.png"));
                 prizeID = 0;// no prize ID is no prize
             }
@@ -395,6 +427,9 @@ public class SillyBubblesGame extends Game {
         bookItem.itemCount = prefs.getInteger(bookItem.itemName);
         crystalItem.itemCount = prefs.getInteger(crystalItem.itemName);
         ringItem.itemCount = prefs.getInteger(ringItem.itemName);
+        jewel1Item.itemCount = prefs.getInteger(jewel1Item.itemName);
+        jewel2Item.itemCount = prefs.getInteger(jewel2Item.itemName);
+        jewel3Item.itemCount = prefs.getInteger(jewel3Item.itemName);
 
         // Item images used in menu screen
         Image diamondImage = new Image(new TextureRegion((new Texture("diamond.png"))));
@@ -403,6 +438,9 @@ public class SillyBubblesGame extends Game {
         Image bookImage = new Image(new TextureRegion((new Texture("book.png"))));
         Image crystalImage = new Image(new TextureRegion((new Texture("crystal.png"))));
         Image ringImage = new Image(new TextureRegion((new Texture("ring.png"))));
+        Image jewel1Image = new Image(new TextureRegion((new Texture("jewel1.png"))));
+        Image jewel2Image = new Image(new TextureRegion((new Texture("jewel2.png"))));
+        Image jewel3Image = new Image(new TextureRegion((new Texture("jewel3.png"))));
 
         diamondImage.setScale(2.5f, 2.5f);
         firstAidImage.setScale(2.5f, 2.5f);
@@ -410,6 +448,9 @@ public class SillyBubblesGame extends Game {
         bookImage.setScale(2.5f, 2.5f);
         crystalImage.setScale(2.5f, 2.5f);
         ringImage.setScale(2.5f, 2.5f);
+        jewel1Image.setScale(2.5f, 2.5f);
+        jewel2Image.setScale(2.5f, 2.5f);
+        jewel3Image.setScale(2.5f, 2.5f);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(textFont, Color.WHITE);
 
@@ -419,6 +460,9 @@ public class SillyBubblesGame extends Game {
         bookLabel = new Label(" " + bookItem.itemCount, labelStyle);
         crystalLabel = new Label("  " + crystalItem.itemCount, labelStyle);
         ringLabel = new Label(" " + ringItem.itemCount, labelStyle);
+        jewel1Label = new Label(" " + jewel1Item.itemCount, labelStyle);
+        jewel2Label = new Label(" " + jewel2Item.itemCount, labelStyle);
+        jewel3Label = new Label(" " + jewel3Item.itemCount, labelStyle);
 
         diamondImage.setPosition(0, Gdx.graphics.getHeight() - 128*3);
         diamondLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 128*3);
@@ -432,6 +476,13 @@ public class SillyBubblesGame extends Game {
         crystalLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 256*3);
         ringImage.setPosition(0, Gdx.graphics.getHeight() - 288*3);
         ringLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 288*3);
+
+        jewel1Image.setPosition(0, Gdx.graphics.getHeight() - 320*3);
+        jewel1Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 320*3);
+        jewel2Image.setPosition(0, Gdx.graphics.getHeight() - 352*3);
+        jewel2Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 352*3);
+        jewel3Image.setPosition(0, Gdx.graphics.getHeight() - 384*3);
+        jewel3Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 384*3);
 
         background = new TextureRegion(new Texture("hills.png"));
 
@@ -493,6 +544,9 @@ public class SillyBubblesGame extends Game {
         menuStage.addActor(bookImage);
         menuStage.addActor(crystalImage);
         menuStage.addActor(ringImage);
+        menuStage.addActor(jewel1Image);
+        menuStage.addActor(jewel2Image);
+        menuStage.addActor(jewel3Image);
 
         // count
         menuStage.addActor(diamondLabel);
@@ -501,6 +555,10 @@ public class SillyBubblesGame extends Game {
         menuStage.addActor(bookLabel);
         menuStage.addActor(crystalLabel);
         menuStage.addActor(ringLabel);
+        menuStage.addActor(jewel1Label);
+        menuStage.addActor(jewel2Label);
+        menuStage.addActor(jewel3Label);
+
         menuStage.addActor(bubbleBackButton);
 
         Gdx.input.setInputProcessor(stage);
