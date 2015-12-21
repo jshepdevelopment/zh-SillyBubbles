@@ -183,7 +183,6 @@ public class SillyBubblesGame extends Game {
 		private TextureRegion texture;
 		private TextureRegion prizeTexture;
         boolean poof = false; // used to 'pop' the bubble
-        int scaleModifier = 0; // used to score the scale of the bubble for 'pop'
 		int prizeID = 0;
 		int speed = 0;
 
@@ -293,8 +292,8 @@ public class SillyBubblesGame extends Game {
                         Gdx.app.log("JSLOG", jewel3Item.getItemCount() + " Jewel3s collected.");
                     }
                     // pop the bubble
-                    this.poof = true;
-					//this.reset();
+                    Gdx.input.vibrate(25);
+                    this.reset();
 				}
 				return this;
 			}
@@ -305,25 +304,7 @@ public class SillyBubblesGame extends Game {
 		@Override
 		public void act(float delta){
 
-            if(!this.poof) {
-                this.setPosition(this.getX(), this.getY() + this.speed);
-            }
-            if(this.poof) {
-                this.setPosition(this.getX(), this.getY() + 0);
-//                this.setScale(this.scaleModifier, this.scaleModifier);
-                this.scaleModifier++;
-//                Gdx.app.log("JSLOG", "this.scaleModifier is " + this.scaleModifier);
-                if(this.scaleModifier >= 25) {
-//                    this.poof = false;
-                    this.scaleModifier = 0;
-                    this.reset();
-                }
-                //this.setWidth(getWidth() * scaleModifier);
-                //this.setScale(this.getScaleX() * this.scaleModifier, this.getScaleY() * this.scaleModifier);
-
-                //this.poof = false;
-                //this.reset();
-            }
+            this.setPosition(this.getX(), this.getY() + this.speed);
 
             // if the bubble wanders to far up the y axis, reset it
             if(this.getY() > Gdx.graphics.getHeight() + texture.getRegionHeight()) {
