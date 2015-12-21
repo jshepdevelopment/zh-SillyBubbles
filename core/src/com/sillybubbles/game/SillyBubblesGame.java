@@ -571,13 +571,16 @@ public class SillyBubblesGame extends Game {
 
 	@Override
     public void resize(int width, int height) {
-		stage.getViewport().update(width, height, true);
-        menuStage.getViewport().update(width, height, true);
+
+        stage.getViewport().update(width, height, true);
+        //menuStage.getViewport().update(width, height, true);
+
 		rbg = new ParallaxBackground(new ParallaxLayer[]{
 				//	new ParallaxLayer(background, new Vector2(),new Vector2(0, 0)),
 				new ParallaxLayer(background,new Vector2(1.0f,1.0f),new Vector2(0, 500)),
 				//	new ParallaxLayer(background,new Vector2(0.1f,0),new Vector2(0, stage.getViewport().getScreenHeight()-200),new Vector2(0, 0)),
 		}, stage.getViewport().getScreenWidth(), stage.getViewport().getScreenHeight()/2, new Vector2(150,0));
+
 	}
 
 	@Override
