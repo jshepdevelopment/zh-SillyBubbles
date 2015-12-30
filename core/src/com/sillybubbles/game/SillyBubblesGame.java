@@ -4,13 +4,20 @@ package com.sillybubbles.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -19,15 +26,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.Random;
 
 public class SillyBubblesGame extends Game {
 
-
     final int itemWidth = 32;
-    final int itemHeight = 32;
 
 	// create the items and count
 	PrizeItem diamondItem = new PrizeItem("Diamond", 0);
@@ -52,6 +57,9 @@ public class SillyBubblesGame extends Game {
 
 	TextureRegion background;
 	ParallaxBackground rbg;
+
+    private TextureAtlas textureAtlas;
+    private Animation animation;
 
     BitmapFont textFont;
 
@@ -185,8 +193,12 @@ public class SillyBubblesGame extends Game {
         boolean poof = false; // used to 'pop' the bubble
 		int prizeID = 0;
 		int speed = 0;
+        ParticleEffect pe = new ParticleEffect();
 
 		public Bubble(){
+
+            this.pe.load(Gdx.files.internal("bubblepop.p"),Gdx.files.internal(""));
+            this.pe.getEmitters().first().setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
 
             Random random = new Random();
             int randomBubble = random.nextInt(8) + 1;
@@ -225,7 +237,10 @@ public class SillyBubblesGame extends Game {
 					getWidth() / 2, getHeight() / 2, getScaleX(), getScaleY(), getRotation());
 
 			batch.draw(texture, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
-					getScaleX(), getScaleY(), getRotation());
+                    getScaleX(), getScaleY(), getRotation());
+//            batch.begin();
+            this.pe.draw(batch);
+           // batch.end();
 		}
 
         // This hit() instead of checking against a bounding box, checks a bounding circle.
@@ -293,6 +308,8 @@ public class SillyBubblesGame extends Game {
                     }
                     // pop the bubble
                     Gdx.input.vibrate(25);
+                    this.pe.setPosition(this.getX() + getScaleX() * 160, this.getY() + getScaleY() * 160);
+                    this.pe.start();
                     this.reset();
 				}
 				return this;
@@ -302,15 +319,20 @@ public class SillyBubblesGame extends Game {
         }
 
 		@Override
-		public void act(float delta){
+        public void act(float delta) {
 
             this.setPosition(this.getX(), this.getY() + this.speed);
 
             // if the bubble wanders to far up the y axis, reset it
             if(this.getY() > Gdx.graphics.getHeight() + texture.getRegionHeight()) {
-				this.reset();
+                this.reset();
 			}
-		}
+
+            pe.update(Gdx.graphics.getDeltaTime());
+            //if (this.pe.isComplete())
+             //   this.pe.reset();
+
+        }
 
 		public void reset() {
 
@@ -389,16 +411,62 @@ public class SillyBubblesGame extends Game {
 	private Stage stage;
     private Stage menuStage;
 
+
+    public enum ScreenType {
+        LDPI, MDPI, HDPI, XHDPI, XXHDPI, XXXHDPI
+    }
+
 	@Override
 	public void create() {
+
+        //Define the screen as MDPI as baseline
+        ScreenType screenType = ScreenType.MDPI;
+
+        // define various screen sizes and resolutions
+        int screenWidth = Gdx.graphics.getWidth();
+        //int screenHeight = Gdx.graphics.getHeight();
+
+        int baseWidth = 320;
+        //int baseHeight  = 480; // not sure if this will be necessary
+
+        if ( screenWidth <  baseWidth ) screenType = ScreenType.LDPI;
+        if ( screenWidth >= baseWidth * 1.5 ) screenType = ScreenType.HDPI;
+        if ( screenWidth >= baseWidth * 2 ) screenType = ScreenType.XHDPI;
+        if ( screenWidth >= baseWidth * 3 ) screenType = ScreenType.XXHDPI;
+        if ( screenWidth >= baseWidth * 4 ) screenType = ScreenType.XXXHDPI;
+
+        Gdx.app.log("JSLOG", "screenType is " + screenType.toString());
+
 
         // setting up font
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("cartoon.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 72;
+        // set font size based on screen type
+        if (screenType == ScreenType.XXXHDPI) parameter.size = 72;
+        if (screenType == ScreenType.XXHDPI) parameter.size = 54;
+        if (screenType == ScreenType.XHDPI) parameter.size = 36;
+        if (screenType == ScreenType.HDPI) parameter.size = 27;
+        if (screenType == ScreenType.MDPI) parameter.size = 18;
+        if (screenType == ScreenType.LDPI)  parameter.size = 9;
+
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 3;
         textFont = generator.generateFont(parameter);
+
+        // setting up animated penguin walk
+        textureAtlas = new TextureAtlas(Gdx.files.internal("penguinwalk.atlas"));
+        animation = new Animation(1/15f, textureAtlas.getRegions());
+
+        AnimatedImage penguinWalking = new AnimatedImage(animation);
+
+        // change size based on screen type
+
+        if (screenType == ScreenType.XXXHDPI) penguinWalking.scaleBy(2.5f);
+        if (screenType == ScreenType.XXHDPI) penguinWalking.scaleBy(5f);
+        if (screenType == ScreenType.XHDPI) penguinWalking.scaleBy(2.5f);
+        if (screenType == ScreenType.HDPI) penguinWalking.scaleBy(1.875f);
+        if (screenType == ScreenType.MDPI) penguinWalking.scaleBy(1.25f);
+        if (screenType == ScreenType.LDPI)  penguinWalking.scaleBy(1.0f);
 
         Preferences prefs = Gdx.app.getPreferences("BubblePrefs"); // load the prefs file
 
@@ -470,12 +538,14 @@ public class SillyBubblesGame extends Game {
 		Bubble[] bubbles;
 		int bubbleCount = 15;
 
-		// stage = new Stage(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),true);
-		stage = new Stage(new ScreenViewport());
+		//stage = new Stage(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),true);
+		//stage = new Stage(new ScreenViewport());
+        stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
         // this is a simple game, so we just gonna have a menu type list of viewable items
         // on a seperate stage in the same class
-        menuStage = new Stage(new ScreenViewport());
+        //menuStage = new Stage(new ScreenViewport());
+        menuStage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
 		// button textutes
         final TextureRegion bubbleButtonTexture = new TextureRegion(new Texture("bubblebutton.png"));
@@ -516,6 +586,7 @@ public class SillyBubblesGame extends Game {
 
         // we will button on top, because it's like a HUD
         stage.addActor(bubbleButton);
+        stage.addActor(penguinWalking);
 
         // menuStage shows a list of collected items
         // images
@@ -554,6 +625,7 @@ public class SillyBubblesGame extends Game {
 
 	@Override
 	public void render() {
+
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if(playing) {
@@ -594,6 +666,9 @@ public class SillyBubblesGame extends Game {
         prefs.putInteger(bookItem.itemName, bookItem.itemCount);
         prefs.putInteger(crystalItem.itemName, crystalItem.itemCount);
         prefs.putInteger(ringItem.itemName, ringItem.itemCount);
+        prefs.putInteger(jewel1Item.itemName, jewel1Item.itemCount);
+        prefs.putInteger(jewel2Item.itemName, jewel2Item.itemCount);
+        prefs.putInteger(jewel3Item.itemName, jewel3Item.itemCount);
         prefs.flush(); // saves the preferences file
 
         Gdx.app.log("JSLOG", "Game Paused.");
