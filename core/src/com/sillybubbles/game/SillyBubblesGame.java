@@ -461,8 +461,8 @@ public class SillyBubblesGame extends Game {
 
         // change size based on screen type
 
-        if (screenType == ScreenType.XXXHDPI) penguinWalking.scaleBy(2.5f);
-        if (screenType == ScreenType.XXHDPI) penguinWalking.scaleBy(5f);
+        if (screenType == ScreenType.XXXHDPI) penguinWalking.scaleBy(5f);
+        if (screenType == ScreenType.XXHDPI) penguinWalking.scaleBy(3.25f);
         if (screenType == ScreenType.XHDPI) penguinWalking.scaleBy(2.5f);
         if (screenType == ScreenType.HDPI) penguinWalking.scaleBy(1.875f);
         if (screenType == ScreenType.MDPI) penguinWalking.scaleBy(1.25f);
