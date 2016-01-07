@@ -15,7 +15,6 @@ public class AnimatedImage extends Image
     public AnimatedImage(Animation animation) {
         super(animation.getKeyFrame(0));
         this.animation = animation;
-        this.setPosition(0,350);
     }
 
     @Override

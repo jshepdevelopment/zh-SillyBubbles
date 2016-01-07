@@ -4,20 +4,16 @@ package com.sillybubbles.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -33,6 +29,10 @@ import java.util.Random;
 public class SillyBubblesGame extends Game {
 
     final int itemWidth = 32;
+
+    public enum ScreenType {
+        LDPI, MDPI, HDPI, XHDPI, XXHDPI, XXXHDPI
+    }
 
 	// create the items and count
 	PrizeItem diamondItem = new PrizeItem("Diamond", 0);
@@ -57,9 +57,6 @@ public class SillyBubblesGame extends Game {
 
 	TextureRegion background;
 	ParallaxBackground rbg;
-
-    private TextureAtlas textureAtlas;
-    private Animation animation;
 
     BitmapFont textFont;
 
@@ -126,7 +123,7 @@ public class SillyBubblesGame extends Game {
 
         @Override
         public void act(float delta) {
-            this.setPosition(0, Gdx.graphics.getHeight() - _texture.getRegionHeight());
+            this.setPosition(0, 0);//Gdx.graphics.getHeight() - _texture.getRegionHeight());
         }
     }
 
@@ -181,7 +178,7 @@ public class SillyBubblesGame extends Game {
 
         @Override
         public void act(float delta) {
-            this.setPosition(0, Gdx.graphics.getHeight() - _texture.getRegionHeight());
+            this.setPosition(0, 0);//Gdx.graphics.getHeight() - _texture.getRegionHeight());
         }
     }
 
@@ -195,7 +192,13 @@ public class SillyBubblesGame extends Game {
 		int speed = 0;
         ParticleEffect pe = new ParticleEffect();
 
-		public Bubble(){
+        int speedModifier;
+        float scaleModifier;
+
+		public Bubble(int speedModifier, float scaleModifier){
+
+            this.speedModifier = speedModifier;
+            this.scaleModifier = scaleModifier;
 
             this.pe.load(Gdx.files.internal("bubblepop.p"),Gdx.files.internal(""));
             this.pe.getEmitters().first().setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
@@ -216,7 +219,7 @@ public class SillyBubblesGame extends Game {
             // set bounds
             this.setBounds(getX(), getY(), texture.getRegionWidth(), texture.getRegionHeight());
             //this.scaleModifier = random.nextInt() * 2;
-            this.setScale(random.nextFloat() * 2);
+
 
 			// get input
 			this.addListener(new InputListener() {
@@ -388,8 +391,9 @@ public class SillyBubblesGame extends Game {
 			int randomX = random.nextInt(Gdx.graphics.getWidth());
 			//this.setVisible(true);
 			//this.setScale(random.nextFloat());
-			this.speed =  random.nextInt(20) + 10;
-			this.setPosition(randomX, -3000);
+			this.speed =  (random.nextInt(10) + 5) * speedModifier;
+			this.setPosition(randomX,  0 - randomX);
+            this.setScale(random.nextFloat() * this.scaleModifier);
 
             int randomBubble = random.nextInt(8) + 1;
 
@@ -411,11 +415,6 @@ public class SillyBubblesGame extends Game {
 	private Stage stage;
     private Stage menuStage;
 
-
-    public enum ScreenType {
-        LDPI, MDPI, HDPI, XHDPI, XXHDPI, XXXHDPI
-    }
-
 	@Override
 	public void create() {
 
@@ -427,6 +426,8 @@ public class SillyBubblesGame extends Game {
         //int screenHeight = Gdx.graphics.getHeight();
 
         int baseWidth = 320;
+        float scaleModifier = 0.5f;
+        int speedModifier = 1;
         //int baseHeight  = 480; // not sure if this will be necessary
 
         if ( screenWidth <  baseWidth ) screenType = ScreenType.LDPI;
@@ -454,19 +455,12 @@ public class SillyBubblesGame extends Game {
         textFont = generator.generateFont(parameter);
 
         // setting up animated penguin walk
+        TextureAtlas textureAtlas;
+        Animation animation;
         textureAtlas = new TextureAtlas(Gdx.files.internal("penguinwalk.atlas"));
         animation = new Animation(1/15f, textureAtlas.getRegions());
 
         AnimatedImage penguinWalking = new AnimatedImage(animation);
-
-        // change size based on screen type
-
-        if (screenType == ScreenType.XXXHDPI) penguinWalking.scaleBy(5f);
-        if (screenType == ScreenType.XXHDPI) penguinWalking.scaleBy(3.25f);
-        if (screenType == ScreenType.XHDPI) penguinWalking.scaleBy(2.5f);
-        if (screenType == ScreenType.HDPI) penguinWalking.scaleBy(1.875f);
-        if (screenType == ScreenType.MDPI) penguinWalking.scaleBy(1.25f);
-        if (screenType == ScreenType.LDPI)  penguinWalking.scaleBy(1.0f);
 
         Preferences prefs = Gdx.app.getPreferences("BubblePrefs"); // load the prefs file
 
@@ -533,7 +527,50 @@ public class SillyBubblesGame extends Game {
         jewel3Image.setPosition(0, Gdx.graphics.getHeight() - 384*3);
         jewel3Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 384*3);
 
-        background = new TextureRegion(new Texture("hills.png"));
+        // button textures
+        final TextureRegion bubbleButtonTexture = new TextureRegion(new Texture("bubblebutton.png"));
+        final TextureRegion bubbleBackButtonTexture = new TextureRegion(new Texture("bubblebackbutton.png"));
+
+        // add a bubbleButton
+        BubbleButton bubbleButton = new BubbleButton(bubbleButtonTexture);
+        BubbleBackButton bubbleBackButton = new BubbleBackButton(bubbleBackButtonTexture);
+
+        // change size based on screen type
+        if (screenType == ScreenType.XXXHDPI) {
+            scaleModifier = 2f;
+            speedModifier = 4;
+            penguinWalking.scaleBy(5f);
+            background = new TextureRegion(new Texture("hillsxxxhdpi.png"));
+
+        }
+        if (screenType == ScreenType.XXHDPI) {
+            penguinWalking.scaleBy(3.25f);
+            background = new TextureRegion(new Texture("hillsxxhdpi.png"));
+
+        }
+        if (screenType == ScreenType.XHDPI) {
+            penguinWalking.scaleBy(2.5f);
+            background = new TextureRegion(new Texture("hillsxhdpi.png"));
+
+        }
+        if (screenType == ScreenType.HDPI) {
+            penguinWalking.scaleBy(1.875f);
+            background = new TextureRegion(new Texture("hillshdpi.png"));
+        }
+
+        if (screenType == ScreenType.MDPI) {
+            scaleModifier = 0.5f;
+            speedModifier = 1;
+            penguinWalking.scaleBy(1f);
+            penguinWalking.setPosition(0, 96);
+            bubbleButton.setScale(.25f);
+            bubbleBackButton.setScale(.25f);
+            background = new TextureRegion(new Texture("hillsmdpi.png"));
+        }
+        if (screenType == ScreenType.LDPI)  {
+            penguinWalking.scaleBy(1.0f);
+            background = new TextureRegion(new Texture("hillsmdpi.png"));
+        }
 
 		Bubble[] bubbles;
 		int bubbleCount = 15;
@@ -547,10 +584,6 @@ public class SillyBubblesGame extends Game {
         //menuStage = new Stage(new ScreenViewport());
         menuStage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
-		// button textutes
-        final TextureRegion bubbleButtonTexture = new TextureRegion(new Texture("bubblebutton.png"));
-        final TextureRegion bubbleBackButtonTexture = new TextureRegion(new Texture("bubblebackbutton.png"));
-
         rbg = new ParallaxBackground(new ParallaxLayer[]{
 				//	new ParallaxLayer(background, new Vector2(),new Vector2(0, 0)),
 				new ParallaxLayer(background,new Vector2(1.0f,1.0f),new Vector2(0, 500)),
@@ -558,26 +591,22 @@ public class SillyBubblesGame extends Game {
 		}, stage.getViewport().getScreenWidth(), stage.getViewport().getScreenHeight(), new Vector2(150,0));
 
 		// random number seed
-		Random random = new Random();
-
-        // add a bubbleButton
-        BubbleButton bubbleButton = new BubbleButton(bubbleButtonTexture);
-        BubbleBackButton bubbleBackButton = new BubbleBackButton(bubbleBackButtonTexture);
+		//Random random = new Random();
 
 		// initialize arrays for bubbles
 		bubbles = new Bubble[bubbleCount];
 
 		// make 10 bubble objects at random on screen locations
 		for(int i = 0; i < bubbleCount; i++){
-			bubbles[i] = new Bubble();
+			bubbles[i] = new Bubble(speedModifier, scaleModifier);
 			//moveActions[i] = new MoveToAction();
             			// random.nextInt(Gdx.graphics.getWidth());
-			bubbles[i].speed =  random.nextInt(20) + 10;
-			bubbles[i].setPosition(bubbles[i].getX(), -3000);
 
 			// set the name of the bubble to it's index within the loop
-			bubbles[i].setName(Integer.toString(i));
+            bubbles[i].setName(Integer.toString(i));
             bubbles[i].reset();
+
+            //bubbles[i].setScale( scaleModifier);
 
 			// add to the stage
 			stage.addActor(bubbles[i]);
