@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.Random;
@@ -33,6 +34,11 @@ public class SillyBubblesGame extends Game {
     public enum ScreenType {
         LDPI, MDPI, HDPI, XHDPI, XXHDPI, XXXHDPI
     }
+
+    // Stages for drawing
+    private Stage stage;
+    private Stage menuStage;
+    private Stage waitingStage;
 
 	// create the items and count
 	PrizeItem diamondItem = new PrizeItem("Diamond", 0);
@@ -55,12 +61,20 @@ public class SillyBubblesGame extends Game {
     Label jewel2Label;
     Label jewel3Label;
 
+    Label waitingLabel;
+    Label waitingCounterLabel;
+
+    long startTime;
+    long elapsedTime;
+
 	TextureRegion background;
 	ParallaxBackground rbg;
 
     BitmapFont textFont;
+    BitmapFont textFontLarge;
 
     boolean playing = true; // flag to switch between playing and checking items
+    boolean waiting = false;
 
     class BubbleButton extends Actor {
         private TextureRegion _texture;
@@ -309,6 +323,12 @@ public class SillyBubblesGame extends Game {
                         jewel3Item.itemCount++;
                         Gdx.app.log("JSLOG", jewel3Item.getItemCount() + " Jewel3s collected.");
                     }
+                    if(this.prizeID==10) {
+                        //Start wait jewel3Item.itemCount++;
+                        Gdx.app.log("JSLOG", "Boom!");
+                        waiting = true;
+                        startTime = TimeUtils.millis();
+                    }
                     // pop the bubble
                     Gdx.input.vibrate(25);
                     this.pe.setPosition(this.getX() + getScaleX() * 160, this.getY() + getScaleY() * 160);
@@ -323,6 +343,17 @@ public class SillyBubblesGame extends Game {
 
 		@Override
         public void act(float delta) {
+
+            if(waiting) {
+                elapsedTime = TimeUtils.timeSinceMillis(startTime);
+                Gdx.app.log("JSLOG", "elapsed time is " + elapsedTime);
+
+                waitingCounterLabel.setText("" + (5 - (1 + elapsedTime / 1000)));
+
+                //stop waiting after 5 seconds
+                if(elapsedTime > 5000)waiting = false;
+
+            }
 
             this.setPosition(this.getX(), this.getY() + this.speed);
 
@@ -382,7 +413,13 @@ public class SillyBubblesGame extends Game {
                 this.prizeTexture = new TextureRegion(new Texture("jewel3.png"));
                 prizeID = 9;
             }
-            if (randomPrize > 9) {
+
+            if (randomPrize == 10) {
+                this.prizeTexture = new TextureRegion(new Texture("bomb.png"));
+                prizeID = 10;
+            }
+
+            if (randomPrize > 10) {
                 this.prizeTexture = new TextureRegion(new Texture("empty.png"));
                 prizeID = 0;// no prize ID is no prize
             }
@@ -392,7 +429,7 @@ public class SillyBubblesGame extends Game {
 			//this.setVisible(true);
 			//this.setScale(random.nextFloat());
 			this.speed =  (random.nextInt(10) + 5) * speedModifier;
-			this.setPosition(randomX,  0 - randomX);
+			this.setPosition(randomX,  0 - (Gdx.graphics.getHeight() + randomX));
             this.setScale(random.nextFloat() * this.scaleModifier);
 
             int randomBubble = random.nextInt(8) + 1;
@@ -412,9 +449,6 @@ public class SillyBubblesGame extends Game {
 		}
 	}
 
-	private Stage stage;
-    private Stage menuStage;
-
 	@Override
 	public void create() {
 
@@ -424,6 +458,9 @@ public class SillyBubblesGame extends Game {
         // define various screen sizes and resolutions
         int screenWidth = Gdx.graphics.getWidth();
         //int screenHeight = Gdx.graphics.getHeight();
+
+        //more for higher dp screens
+        int bubbleCount = 0;
 
         int baseWidth = 320;
         float scaleModifier = 0.5f;
@@ -442,17 +479,40 @@ public class SillyBubblesGame extends Game {
         // setting up font
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("cartoon.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        FreeTypeFontGenerator.FreeTypeFontParameter parameterLarge = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
         // set font size based on screen type
-        if (screenType == ScreenType.XXXHDPI) parameter.size = 72;
-        if (screenType == ScreenType.XXHDPI) parameter.size = 54;
-        if (screenType == ScreenType.XHDPI) parameter.size = 36;
-        if (screenType == ScreenType.HDPI) parameter.size = 27;
-        if (screenType == ScreenType.MDPI) parameter.size = 18;
-        if (screenType == ScreenType.LDPI)  parameter.size = 9;
+        if (screenType == ScreenType.XXXHDPI){
+            parameter.size = 72;
+            parameterLarge.size = 144;
+        }
+        if (screenType == ScreenType.XXHDPI) {
+            parameter.size = 54;
+            parameterLarge.size = 108;
+        }
+        if (screenType == ScreenType.XHDPI){
+            parameter.size = 36;
+            parameterLarge.size = 72;
+        }
+        if (screenType == ScreenType.HDPI) {
+            parameter.size = 27;
+            parameterLarge.size = 54;
+        }
+        if (screenType == ScreenType.MDPI){
+            parameter.size = 18;
+            parameterLarge.size = 36;
+        }
+        if (screenType == ScreenType.LDPI){
+            parameter.size = 9;
+            parameterLarge.size = 18;
+        }
 
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 3;
+        parameterLarge.borderWidth = 3;
+
         textFont = generator.generateFont(parameter);
+        textFontLarge = generator.generateFont(parameterLarge);
 
         // setting up animated penguin walk
         TextureAtlas textureAtlas;
@@ -496,6 +556,7 @@ public class SillyBubblesGame extends Game {
         jewel3Image.setScale(2.5f, 2.5f);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(textFont, Color.WHITE);
+        Label.LabelStyle labelStyleLarge = new Label.LabelStyle(textFontLarge, Color.YELLOW);
 
         diamondLabel = new Label(" " + diamondItem.itemCount, labelStyle);
         firstAidLabel = new Label("  " + firstAidItem.itemCount, labelStyle);
@@ -537,28 +598,34 @@ public class SillyBubblesGame extends Game {
 
         // change size based on screen type
         if (screenType == ScreenType.XXXHDPI) {
+            bubbleCount = 12;
             scaleModifier = 2f;
             speedModifier = 4;
             penguinWalking.scaleBy(5f);
+            penguinWalking.setPosition(0, 300);
             background = new TextureRegion(new Texture("hillsxxxhdpi.png"));
 
         }
         if (screenType == ScreenType.XXHDPI) {
+            bubbleCount = 10;
             penguinWalking.scaleBy(3.25f);
             background = new TextureRegion(new Texture("hillsxxhdpi.png"));
 
         }
         if (screenType == ScreenType.XHDPI) {
+            bubbleCount = 8;
             penguinWalking.scaleBy(2.5f);
             background = new TextureRegion(new Texture("hillsxhdpi.png"));
 
         }
         if (screenType == ScreenType.HDPI) {
+            bubbleCount = 5;
             penguinWalking.scaleBy(1.875f);
             background = new TextureRegion(new Texture("hillshdpi.png"));
         }
 
         if (screenType == ScreenType.MDPI) {
+            bubbleCount = 5;
             scaleModifier = 0.5f;
             speedModifier = 1;
             penguinWalking.scaleBy(1f);
@@ -573,16 +640,17 @@ public class SillyBubblesGame extends Game {
         }
 
 		Bubble[] bubbles;
-		int bubbleCount = 15;
 
-		//stage = new Stage(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),true);
-		//stage = new Stage(new ScreenViewport());
+		// set up the stage
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
         // this is a simple game, so we just gonna have a menu type list of viewable items
-        // on a seperate stage in the same class
-        //menuStage = new Stage(new ScreenViewport());
+        // on a separate stage in the same class
         menuStage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+
+        // finally a waiting stage to display if player pops bubble with bomb
+        waitingStage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+
 
         rbg = new ParallaxBackground(new ParallaxLayer[]{
 				//	new ParallaxLayer(background, new Vector2(),new Vector2(0, 0)),
@@ -644,12 +712,23 @@ public class SillyBubblesGame extends Game {
 
         Gdx.input.setInputProcessor(stage);
 
+        // for waiting
+        waitingLabel = new Label("Bomb! You must wait. Ha ha ha.", labelStyle);
+
+        waitingCounterLabel = new Label("0", labelStyleLarge);
+        waitingCounterLabel.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+        waitingStage.addActor(waitingCounterLabel);
+
+        waitingLabel.setPosition(0, 0);
+        waitingStage.addActor(waitingLabel);
+
 	}
 
 	@Override
 	public void dispose() {
 		stage.dispose();
         menuStage.dispose();
+        waitingStage.dispose();
 	}
 
 	@Override
@@ -663,11 +742,18 @@ public class SillyBubblesGame extends Game {
             stage.draw();
         }
 
-        else {
+        if(!playing) {
             rbg.render(Gdx.graphics.getDeltaTime());
             menuStage.act(Gdx.graphics.getDeltaTime());
             menuStage.draw();
         }
+
+        if(waiting) {
+            rbg.render(Gdx.graphics.getDeltaTime());
+            waitingStage.act(Gdx.graphics.getDeltaTime());
+            waitingStage.draw();
+        }
+
 	}
 
 	@Override
