@@ -22,6 +22,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -129,6 +131,7 @@ public class SillyBubblesGame extends Game {
 
                         Gdx.input.setInputProcessor(menuStage);
                         playing = false;
+                        Gdx.app.log("JSLOG", "playing should be false,  playing is " + playing);
                 }
             }
             // button not pressed, return null
@@ -183,6 +186,7 @@ public class SillyBubblesGame extends Game {
                     Gdx.app.log("JSLOG", "Bubble back button pressed.");
                     Gdx.input.setInputProcessor(stage);
                     playing = true;
+                    Gdx.app.log("JSLOG", "playing should be true, playing is " + playing);
                 }
             }
 
@@ -337,7 +341,7 @@ public class SillyBubblesGame extends Game {
 				}
 				return this;
 			}
-            // Otherwise, it isnt
+            // Otherwise, it isn't
             return null;
         }
 
@@ -484,7 +488,7 @@ public class SillyBubblesGame extends Game {
         // set font size based on screen type
         if (screenType == ScreenType.XXXHDPI){
             parameter.size = 72;
-            parameterLarge.size = 144;
+            parameterLarge.size = 288;
         }
         if (screenType == ScreenType.XXHDPI) {
             parameter.size = 54;
@@ -568,33 +572,73 @@ public class SillyBubblesGame extends Game {
         jewel2Label = new Label(" " + jewel2Item.itemCount, labelStyle);
         jewel3Label = new Label(" " + jewel3Item.itemCount, labelStyle);
 
-        diamondImage.setPosition(0, Gdx.graphics.getHeight() - 128*3);
-        diamondLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 128*3);
-        firstAidImage.setPosition(0, Gdx.graphics.getHeight() - 160*3);
-        firstAidLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 160*3);
-        starImage.setPosition(0, Gdx.graphics.getHeight() - 192*3);
-        starLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 192*3);
-        bookImage.setPosition(0, Gdx.graphics.getHeight() - 224*3);
-        bookLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 224*3);
-        crystalImage.setPosition(0, Gdx.graphics.getHeight() - 256*3);
-        crystalLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 256*3);
-        ringImage.setPosition(0, Gdx.graphics.getHeight() - 288*3);
-        ringLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 288*3);
+        final TextureRegion bubbleBackButtonTexture = new TextureRegion(new Texture("bubblebackbutton.png"));
+        BubbleBackButton bubbleBackButton = new BubbleBackButton(bubbleBackButtonTexture);
 
-        jewel1Image.setPosition(0, Gdx.graphics.getHeight() - 320*3);
-        jewel1Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 320*3);
-        jewel2Image.setPosition(0, Gdx.graphics.getHeight() - 352*3);
-        jewel2Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 352*3);
-        jewel3Image.setPosition(0, Gdx.graphics.getHeight() - 384*3);
-        jewel3Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 384*3);
+        // table to store item count labels
+        final Table scrollTable = new Table();
+        scrollTable.add(diamondImage);
+        scrollTable.add(diamondLabel);
+        scrollTable.row();
+        scrollTable.add(firstAidImage);
+        scrollTable.add(firstAidLabel);
+        scrollTable.row();
+        scrollTable.add(starImage);
+        scrollTable.add(starLabel);
+        scrollTable.row();
+        scrollTable.add(bookImage);
+        scrollTable.add(bookLabel);
+        scrollTable.row();
+        scrollTable.add(crystalImage);
+        scrollTable.add(crystalLabel);
+        scrollTable.row();
+        scrollTable.add(ringImage);
+        scrollTable.add(ringLabel);
+        scrollTable.row();
+        scrollTable.add(jewel1Image);
+        scrollTable.add(jewel1Label);
+        scrollTable.row();
+        scrollTable.add(jewel2Image);
+        scrollTable.add(jewel2Label);
+        scrollTable.row();
+        scrollTable.add(jewel3Image);
+        scrollTable.add(jewel3Label);
+        scrollTable.row();
+        scrollTable.add(bubbleBackButton);
+
+        // a ScrollPane to place table for scrolling
+        final ScrollPane scroller = new ScrollPane(scrollTable);
+
+        final Table table = new Table();
+        table.setFillParent(true);
+        table.add(scroller).fill().expand();
+
+        //diamondImage.setPosition(0, Gdx.graphics.getHeight() - 128*3);
+        //diamondLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 128*3);
+        //firstAidImage.setPosition(0, Gdx.graphics.getHeight() - 160*3);
+        //firstAidLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 160*3);
+        //starImage.setPosition(0, Gdx.graphics.getHeight() - 192*3);
+        //starLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 192*3);
+        //bookImage.setPosition(0, Gdx.graphics.getHeight() - 224*3);
+        //bookLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 224*3);
+        //crystalImage.setPosition(0, Gdx.graphics.getHeight() - 256*3);
+        //crystalLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 256*3);
+        //ringImage.setPosition(0, Gdx.graphics.getHeight() - 288*3);
+        //ringLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 288*3);
+
+        //jewel1Image.setPosition(0, Gdx.graphics.getHeight() - 320*3);
+        //jewel1Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 320*3);
+        //jewel2Image.setPosition(0, Gdx.graphics.getHeight() - 352*3);
+        //jewel2Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 352*3);
+        //jewel3Image.setPosition(0, Gdx.graphics.getHeight() - 384*3);
+        //jewel3Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 384*3);
 
         // button textures
         final TextureRegion bubbleButtonTexture = new TextureRegion(new Texture("bubblebutton.png"));
-        final TextureRegion bubbleBackButtonTexture = new TextureRegion(new Texture("bubblebackbutton.png"));
 
         // add a bubbleButton
         BubbleButton bubbleButton = new BubbleButton(bubbleButtonTexture);
-        BubbleBackButton bubbleBackButton = new BubbleBackButton(bubbleBackButtonTexture);
+
 
         // change size based on screen type
         if (screenType == ScreenType.XXXHDPI) {
@@ -687,28 +731,29 @@ public class SillyBubblesGame extends Game {
 
         // menuStage shows a list of collected items
         // images
-        menuStage.addActor(diamondImage);
-        menuStage.addActor(firstAidImage);
-        menuStage.addActor(starImage);
-        menuStage.addActor(bookImage);
-        menuStage.addActor(crystalImage);
-        menuStage.addActor(ringImage);
-        menuStage.addActor(jewel1Image);
-        menuStage.addActor(jewel2Image);
-        menuStage.addActor(jewel3Image);
+        //menuStage.addActor(diamondImage);
+        //menuStage.addActor(firstAidImage);
+        //menuStage.addActor(starImage);
+        //menuStage.addActor(bookImage);
+        //menuStage.addActor(crystalImage);
+        //menuStage.addActor(ringImage);
+        //menuStage.addActor(jewel1Image);
+        //menuStage.addActor(jewel2Image);
+        //menuStage.addActor(jewel3Image);
 
         // count
-        menuStage.addActor(diamondLabel);
-        menuStage.addActor(firstAidLabel);
-        menuStage.addActor(starLabel);
-        menuStage.addActor(bookLabel);
-        menuStage.addActor(crystalLabel);
-        menuStage.addActor(ringLabel);
-        menuStage.addActor(jewel1Label);
-        menuStage.addActor(jewel2Label);
-        menuStage.addActor(jewel3Label);
+        //menuStage.addActor(diamondLabel);
+        //menuStage.addActor(firstAidLabel);
+        //menuStage.addActor(starLabel);
+        //menuStage.addActor(bookLabel);
+        //menuStage.addActor(crystalLabel);
+        //menuStage.addActor(ringLabel);
+        //menuStage.addActor(jewel1Label);
+        //menuStage.addActor(jewel2Label);
+        //menuStage.addActor(jewel3Label);
 
-        menuStage.addActor(bubbleBackButton);
+        menuStage.addActor(table);
+        //menuStage.addActor(bubbleBackButton);
 
         Gdx.input.setInputProcessor(stage);
 
@@ -736,23 +781,23 @@ public class SillyBubblesGame extends Game {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if(playing) {
+        if (playing) {
             rbg.render(Gdx.graphics.getDeltaTime());
             stage.act(Gdx.graphics.getDeltaTime());
             stage.draw();
-        }
 
-        if(!playing) {
+            if (waiting) {
+                rbg.render(Gdx.graphics.getDeltaTime());
+                waitingStage.act(Gdx.graphics.getDeltaTime());
+                waitingStage.draw();
+            }
+        } else {
             rbg.render(Gdx.graphics.getDeltaTime());
             menuStage.act(Gdx.graphics.getDeltaTime());
             menuStage.draw();
         }
 
-        if(waiting) {
-            rbg.render(Gdx.graphics.getDeltaTime());
-            waitingStage.act(Gdx.graphics.getDeltaTime());
-            waitingStage.draw();
-        }
+
 
 	}
 
