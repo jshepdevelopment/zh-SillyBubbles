@@ -549,16 +549,6 @@ public class SillyBubblesGame extends Game {
         Image jewel2Image = new Image(new TextureRegion((new Texture("jewel2.png"))));
         Image jewel3Image = new Image(new TextureRegion((new Texture("jewel3.png"))));
 
-        diamondImage.setScale(2.5f, 2.5f);
-        firstAidImage.setScale(2.5f, 2.5f);
-        starImage.setScale(2.5f, 2.5f);
-        bookImage.setScale(2.5f, 2.5f);
-        crystalImage.setScale(2.5f, 2.5f);
-        ringImage.setScale(2.5f, 2.5f);
-        jewel1Image.setScale(2.5f, 2.5f);
-        jewel2Image.setScale(2.5f, 2.5f);
-        jewel3Image.setScale(2.5f, 2.5f);
-
         Label.LabelStyle labelStyle = new Label.LabelStyle(textFont, Color.WHITE);
         Label.LabelStyle labelStyleLarge = new Label.LabelStyle(textFontLarge, Color.YELLOW);
 
@@ -642,6 +632,15 @@ public class SillyBubblesGame extends Game {
 
         // change size based on screen type
         if (screenType == ScreenType.XXXHDPI) {
+            diamondImage.setScale(2.5f);
+            firstAidImage.setScale(2.5f);
+            starImage.setScale(2.5f);
+            bookImage.setScale(2.5f);
+            crystalImage.setScale(2.5f);
+            ringImage.setScale(2.5f);
+            jewel1Image.setScale(2.5f);
+            jewel2Image.setScale(2.5f);
+            jewel3Image.setScale(2.5f);
             bubbleCount = 12;
             scaleModifier = 2f;
             speedModifier = 4;
@@ -662,13 +661,22 @@ public class SillyBubblesGame extends Game {
             background = new TextureRegion(new Texture("hillsxhdpi.png"));
 
         }
-        if (screenType == ScreenType.HDPI) {
+/*        if (screenType == ScreenType.HDPI) {
             bubbleCount = 5;
             penguinWalking.scaleBy(1.875f);
             background = new TextureRegion(new Texture("hillshdpi.png"));
         }
-
-        if (screenType == ScreenType.MDPI) {
+*/
+        if (screenType == ScreenType.MDPI || screenType == ScreenType.HDPI) {
+            diamondImage.setScale(1f);
+            firstAidImage.setScale(1f);
+            starImage.setScale(1f);
+            bookImage.setScale(1f);
+            crystalImage.setScale(1f);
+            ringImage.setScale(1f);
+            jewel1Image.setScale(1f);
+            jewel2Image.setScale(1f);
+            jewel3Image.setScale(1f);
             bubbleCount = 5;
             scaleModifier = 0.5f;
             speedModifier = 1;
