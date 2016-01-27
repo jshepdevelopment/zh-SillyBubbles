@@ -31,8 +31,6 @@ import java.util.Random;
 
 public class SillyBubblesGame extends Game {
 
-    final int itemWidth = 32;
-
     public enum ScreenType {
         LDPI, MDPI, HDPI, XHDPI, XXHDPI, XXXHDPI
     }
@@ -43,7 +41,8 @@ public class SillyBubblesGame extends Game {
     private Stage waitingStage;
 
 	// create the items and count
-	PrizeItem diamondItem = new PrizeItem("Diamond", 0);
+    PrizeItem bubbleItem = new PrizeItem("Bubble", 0);
+    PrizeItem diamondItem = new PrizeItem("Diamond", 0);
 	PrizeItem firstAidItem = new PrizeItem("First Aid", 0);
 	PrizeItem starItem = new PrizeItem("Star", 0);
     PrizeItem bookItem = new PrizeItem("Book", 0);
@@ -53,6 +52,7 @@ public class SillyBubblesGame extends Game {
     PrizeItem jewel2Item = new PrizeItem("Jewel2", 0);
     PrizeItem jewel3Item = new PrizeItem("Jewel3", 0);
 
+    Label bubbleLabel;
     Label diamondLabel;
     Label firstAidLabel;
     Label starLabel;
@@ -62,6 +62,14 @@ public class SillyBubblesGame extends Game {
     Label jewel1Label;
     Label jewel2Label;
     Label jewel3Label;
+
+    Label collectionLabel;
+    Label impossiblyRareLabel;
+    Label insanelyRareLabel;
+    Label ultraRareLabel;
+    Label veryRareLabel;
+    Label fairlyRareLabel;
+    Label commonLabel;
 
     Label waitingLabel;
     Label waitingCounterLabel;
@@ -119,6 +127,8 @@ public class SillyBubblesGame extends Game {
                 if (Gdx.input.justTouched()) {
                         Gdx.app.log("JSLOG", "Bubble button pressed.");
 
+                        bubbleLabel.setText(" " + bubbleItem.getItemCount());
+
                         diamondLabel.setText(" " + diamondItem.getItemCount());
                         firstAidLabel.setText(" " + firstAidItem.getItemCount());
                         starLabel.setText(" " + starItem.getItemCount());
@@ -140,7 +150,7 @@ public class SillyBubblesGame extends Game {
 
         @Override
         public void act(float delta) {
-            this.setPosition(0, 0);//Gdx.graphics.getHeight() - _texture.getRegionHeight());
+            this.setPosition(getParent().getX(), getParent().getY());//Gdx.graphics.getHeight() - _texture.getRegionHeight());
         }
     }
 
@@ -357,7 +367,8 @@ public class SillyBubblesGame extends Game {
                     }
                     // pop the bubble
                     Gdx.input.vibrate(25);
-
+                    bubbleItem.itemCount++;
+                    Gdx.app.log("JSLOG", bubbleItem.getItemCount() + " bubbles popped.");
                     this.pe.setPosition(this.getX() + getScaleX() * 160, this.getY() + getScaleY() * 160);
                     this.pe.start();
                     this.reset();
@@ -375,7 +386,7 @@ public class SillyBubblesGame extends Game {
                 elapsedTime = TimeUtils.timeSinceMillis(startTime);
                 Gdx.app.log("JSLOG", "elapsed time is " + elapsedTime);
 
-                waitingCounterLabel.setText("" + (5 - (1 + elapsedTime / 1000)));
+                waitingCounterLabel.setText("" + (6 - (1 + elapsedTime / 1000)));
 
                 //stop waiting after 5 seconds
                 if(elapsedTime > 5000)waiting = false;
@@ -389,9 +400,8 @@ public class SillyBubblesGame extends Game {
                 this.reset();
 			}
 
+            // update particle effects
             pe.update(Gdx.graphics.getDeltaTime());
-            //if (this.pe.isComplete())
-             //   this.pe.reset();
 
         }
 
@@ -427,7 +437,6 @@ public class SillyBubblesGame extends Game {
                 this.prizeTexture = ringTexture;
                 prizeID = 6;
             }
-
             if (randomPrize == 7) {
                 this.prizeTexture = jewel1Texture;
                 prizeID = 7;
@@ -456,11 +465,10 @@ public class SillyBubblesGame extends Game {
 			//this.setVisible(true);
 			//this.setScale(random.nextFloat());
 			this.speed =  (random.nextInt(10) + 5) * speedModifier;
-			this.setPosition(randomX,  0 - (Gdx.graphics.getHeight() + randomX));
+			this.setPosition(randomX, 0 - (Gdx.graphics.getHeight() + randomX));
             this.setScale(random.nextFloat() * this.scaleModifier);
 
             int randomBubble = random.nextInt(8) + 1;
-
             Gdx.app.log("JSLOG", "Random bubble color " + randomBubble + " set.");
 
             // set a random texture
@@ -551,6 +559,7 @@ public class SillyBubblesGame extends Game {
 
         Preferences prefs = Gdx.app.getPreferences("BubblePrefs"); // load the prefs file
 
+        bubbleItem.itemCount = prefs.getInteger(bubbleItem.itemName);
         diamondItem.itemCount = prefs.getInteger(diamondItem.itemName);
         firstAidItem.itemCount = prefs.getInteger(firstAidItem.itemName);
         starItem.itemCount = prefs.getInteger(starItem.itemName);
@@ -562,12 +571,15 @@ public class SillyBubblesGame extends Game {
         jewel3Item.itemCount = prefs.getInteger(jewel3Item.itemName);
 
         // Item images used in menu screen
+        Image bubbleImage = new Image(new TextureRegion((new Texture("bubblesmall.png"))));
         Image diamondImage = new Image(new TextureRegion((new Texture("diamond.png"))));
         Image firstAidImage = new Image(new TextureRegion((new Texture("firstaid.png"))));
         Image starImage = new Image(new TextureRegion((new Texture("star.png"))));
         Image bookImage = new Image(new TextureRegion((new Texture("book.png"))));
         Image crystalImage = new Image(new TextureRegion((new Texture("crystal.png"))));
         Image ringImage = new Image(new TextureRegion((new Texture("ring.png"))));
+        Image ringImage2 = new Image(new TextureRegion((new Texture("ring.png"))));
+
         Image jewel1Image = new Image(new TextureRegion((new Texture("jewel1.png"))));
         Image jewel2Image = new Image(new TextureRegion((new Texture("jewel2.png"))));
         Image jewel3Image = new Image(new TextureRegion((new Texture("jewel3.png"))));
@@ -575,6 +587,7 @@ public class SillyBubblesGame extends Game {
         Label.LabelStyle labelStyle = new Label.LabelStyle(textFont, Color.WHITE);
         Label.LabelStyle labelStyleLarge = new Label.LabelStyle(textFontLarge, Color.YELLOW);
 
+        bubbleLabel = new Label(" " + bubbleItem.itemCount, labelStyle);
         diamondLabel = new Label(" " + diamondItem.itemCount, labelStyle);
         firstAidLabel = new Label("  " + firstAidItem.itemCount, labelStyle);
         starLabel = new Label(" " + starItem.itemCount, labelStyle);
@@ -585,67 +598,78 @@ public class SillyBubblesGame extends Game {
         jewel2Label = new Label(" " + jewel2Item.itemCount, labelStyle);
         jewel3Label = new Label(" " + jewel3Item.itemCount, labelStyle);
 
+        collectionLabel = new Label("-Your Collection-", labelStyle);
+
+        impossiblyRareLabel = new Label("Impossibly Rare: ", labelStyle);
+        insanelyRareLabel = new Label("Insanely Rare: ", labelStyle);
+        ultraRareLabel = new Label("Impossibly Rare: ", labelStyle);
+        veryRareLabel = new Label("Very Rare: ", labelStyle);
+        fairlyRareLabel = new Label("Fairly Rare: ", labelStyle);
+        commonLabel = new Label("Common: ", labelStyle);
+
         final TextureRegion bubbleBackButtonTexture = new TextureRegion(new Texture("bubblebackbutton.png"));
         BubbleBackButton bubbleBackButton = new BubbleBackButton(bubbleBackButtonTexture);
 
         // table to store item count labels
         final Table scrollTable = new Table();
-        scrollTable.add(diamondImage);
-        scrollTable.add(diamondLabel);
-        scrollTable.row();
-        scrollTable.add(firstAidImage);
-        scrollTable.add(firstAidLabel);
-        scrollTable.row();
-        scrollTable.add(starImage);
-        scrollTable.add(starLabel);
-        scrollTable.row();
-        scrollTable.add(bookImage);
-        scrollTable.add(bookLabel);
-        scrollTable.row();
-        scrollTable.add(crystalImage);
-        scrollTable.add(crystalLabel);
-        scrollTable.row();
-        scrollTable.add(ringImage);
-        scrollTable.add(ringLabel);
-        scrollTable.row();
-        scrollTable.add(jewel1Image);
-        scrollTable.add(jewel1Label);
-        scrollTable.row();
-        scrollTable.add(jewel2Image);
-        scrollTable.add(jewel2Label);
-        scrollTable.row();
-        scrollTable.add(jewel3Image);
-        scrollTable.add(jewel3Label);
 
+        scrollTable.top().center();
+        // impossibly rare items
+        //scrollTable.add(impossiblyRareLabel);
+        //scrollTable.row();
+        scrollTable.add(collectionLabel).colspan(2);
+        scrollTable.row();
+        scrollTable.add(ringImage).left();
+        scrollTable.add(ringLabel).padBottom(2f);
+        scrollTable.row();
+        // insanely rare items
+        //scrollTable.add(insanelyRareLabel);
+        //scrollTable.row();
+        scrollTable.add(starImage).left();
+        scrollTable.add(starLabel).padBottom(2f);
+        scrollTable.row();
+        // ultra rare items
+        //scrollTable.add(ultraRareLabel);
+        //scrollTable.row();
+        scrollTable.add(diamondImage).left();
+        scrollTable.add(diamondLabel).padBottom(2f);
+        scrollTable.row();
+        // very rare items
+        //scrollTable.add(ultraRareLabel);
+        //scrollTable.row();
+        scrollTable.add(bookImage).left();
+        scrollTable.add(bookLabel).padBottom(2f);
+        scrollTable.row();
+        // fairly rare items
+        //scrollTable.add(fairlyRareLabel);
+        //scrollTable.row();
+        scrollTable.add(jewel3Image).left();
+        scrollTable.add(jewel3Label).padBottom(2f);
+        scrollTable.row();
+        scrollTable.add(crystalImage).left();
+        scrollTable.add(crystalLabel).padBottom(2f);
+        scrollTable.row();
+        // common items
+        //scrollTable.add(commonLabel);
+        //scrollTable.row();
+        scrollTable.add(firstAidImage).left();
+        scrollTable.add(firstAidLabel).padBottom(2f);
+        scrollTable.row();
+        scrollTable.add(jewel2Image).left();
+        scrollTable.add(jewel2Label).padBottom(2f);
+        scrollTable.row();
+        scrollTable.add(bubbleImage).left();
+        scrollTable.add(bubbleLabel).padBottom(2f);
+        scrollTable.row();
+        scrollTable.add(bubbleBackButton);
 
         // a ScrollPane to place table for scrolling
         final ScrollPane scroller = new ScrollPane(scrollTable);
 
         final Table table = new Table();
         table.setFillParent(true);
-        table.add(scroller);//.fill();
-        table.add(bubbleBackButton);
-        //table.add(scroller).fill().expand();
-
-        //diamondImage.setPosition(0, Gdx.graphics.getHeight() - 128*3);
-        //diamondLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 128*3);
-        //firstAidImage.setPosition(0, Gdx.graphics.getHeight() - 160*3);
-        //firstAidLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 160*3);
-        //starImage.setPosition(0, Gdx.graphics.getHeight() - 192*3);
-        //starLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 192*3);
-        //bookImage.setPosition(0, Gdx.graphics.getHeight() - 224*3);
-        //bookLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 224*3);
-        //crystalImage.setPosition(0, Gdx.graphics.getHeight() - 256*3);
-        //crystalLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 256*3);
-        //ringImage.setPosition(0, Gdx.graphics.getHeight() - 288*3);
-        //ringLabel.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 288*3);
-
-        //jewel1Image.setPosition(0, Gdx.graphics.getHeight() - 320*3);
-        //jewel1Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 320*3);
-        //jewel2Image.setPosition(0, Gdx.graphics.getHeight() - 352*3);
-        //jewel2Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 352*3);
-        //jewel3Image.setPosition(0, Gdx.graphics.getHeight() - 384*3);
-        //jewel3Label.setPosition(itemWidth * 5, Gdx.graphics.getHeight() - 384*3);
+        //table.top().center();
+        table.add(scroller).fill().expand();
 
         // button textures
         final TextureRegion bubbleButtonTexture = new TextureRegion(new Texture("bubblebutton.png"));
@@ -656,6 +680,7 @@ public class SillyBubblesGame extends Game {
 
         // change size based on screen type
         if (screenType == ScreenType.XXXHDPI) {
+            bubbleImage.setScale(2.5f);
             diamondImage.setScale(2.5f);
             firstAidImage.setScale(2.5f);
             starImage.setScale(2.5f);
@@ -692,6 +717,7 @@ public class SillyBubblesGame extends Game {
         }
 */
         if (screenType == ScreenType.MDPI || screenType == ScreenType.HDPI) {
+            bubbleImage.setScale(1f);
             diamondImage.setScale(1f);
             firstAidImage.setScale(1f);
             starImage.setScale(1f);
@@ -761,32 +787,11 @@ public class SillyBubblesGame extends Game {
         stage.addActor(bubbleButton);
         stage.addActor(penguinWalking);
 
-        // menuStage shows a list of collected items
-        // images
-        //menuStage.addActor(diamondImage);
-        //menuStage.addActor(firstAidImage);
-        //menuStage.addActor(starImage);
-        //menuStage.addActor(bookImage);
-        //menuStage.addActor(crystalImage);
-        //menuStage.addActor(ringImage);
-        //menuStage.addActor(jewel1Image);
-        //menuStage.addActor(jewel2Image);
-        //menuStage.addActor(jewel3Image);
 
-        // count
-        //menuStage.addActor(diamondLabel);
-        //menuStage.addActor(firstAidLabel);
-        //menuStage.addActor(starLabel);
-        //menuStage.addActor(bookLabel);
-        //menuStage.addActor(crystalLabel);
-        //menuStage.addActor(ringLabel);
-        //menuStage.addActor(jewel1Label);
-        //menuStage.addActor(jewel2Label);
-        //menuStage.addActor(jewel3Label);
-
+//        menuStage.addActor(bubbleBackButton);
         menuStage.addActor(table);
-        //menuStage.addActor(bubbleBackButton);
 
+        // get input
         Gdx.input.setInputProcessor(stage);
 
         // for waiting
@@ -829,8 +834,6 @@ public class SillyBubblesGame extends Game {
             menuStage.draw();
         }
 
-
-
 	}
 
 	@Override
@@ -852,6 +855,7 @@ public class SillyBubblesGame extends Game {
 
         // save the amount of items collected if game is paused
         Preferences prefs = Gdx.app.getPreferences("BubblePrefs");// We store the value 10 with the key of "highScore"
+        prefs.putInteger(bubbleItem.itemName, bubbleItem.itemCount);
         prefs.putInteger(diamondItem.itemName, diamondItem.itemCount);
         prefs.putInteger(firstAidItem.itemName, firstAidItem.itemCount);
         prefs.putInteger(starItem.itemName, starItem.itemCount);
