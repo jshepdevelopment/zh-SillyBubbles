@@ -490,90 +490,112 @@ public class SillyBubblesGame extends Game {
 			Random random = new Random();
 			int randomPrize = random.nextInt(10000) + 1;
 
+            // special debug flag
+            boolean debug = true;
+
 			// set prize
 			if (randomPrize > 6000 && randomPrize <= 6250) {
 				this.prizeTexture = diamondTexture;
 				this.prizeID = 1;
+                if (debug) diamondItem.itemCount++;
 			}
 			if (randomPrize <= 428) {
 				this.prizeTexture = firstAidTexture;
 				this.prizeID = 2;
-			}
+                if (debug) firstAidItem.itemCount++;
+
+            }
 			if (randomPrize > 6500 && randomPrize <= 6550) {
 				this.prizeTexture = starTexture;
 				prizeID = 3;
-			}
+                if (debug) starItem.itemCount++;
+            }
             if (randomPrize > 5000 && randomPrize <= 5500) {
                 this.prizeTexture = bookTexture;
                 this.prizeID = 4;
+                if (debug) bookItem.itemCount++;
             }
             if (randomPrize > 3500 && randomPrize <= 4000) {
                 this.prizeTexture = crystalTexture;
                 this.prizeID = 5;
+                if (debug) crystalItem.itemCount++;
             }
             if (randomPrize >= 9999) {
                 this.prizeTexture = ringTexture;
                 prizeID = 6;
+                if (debug) ringItem.itemCount++;
             }
             if (randomPrize > 428 && randomPrize <= 856) {
                 this.prizeTexture = jewel1Texture;
                 prizeID = 7;
+                if (debug) jewel1Item.itemCount++;
             }
             if (randomPrize >856 && randomPrize <= 1284) {
                 this.prizeTexture = jewel2Texture;
                 prizeID = 8;
+                if (debug) jewel2Item.itemCount++;
             }
             if (randomPrize > 3000 && randomPrize <= 3500 ) {
                 this.prizeTexture = jewel3Texture;
                 prizeID = 9;
+                if (debug) jewel3Item.itemCount++;
             }
             if (randomPrize > 6550 && randomPrize <= 6600) {
                 this.prizeTexture = dragonTexture;
                 this.prizeID = 10;
+                if (debug) dragonItem.itemCount++;
             }
             if (randomPrize > 6250 && randomPrize <= 6500) {
                 this.prizeTexture = redDiamondTexture;
                 this.prizeID = 11;
+                if (debug) redDiamondItem.itemCount++;
             }
             if (randomPrize > 5500 && randomPrize <= 6000) {
                 this.prizeTexture = cameraTexture;
                 prizeID = 12;
+                if (debug) cameraItem.itemCount++;
             }
             if (randomPrize > 4000 && randomPrize <= 4500 ) {
                 this.prizeTexture = purpleBookTexture;
-                this.prizeID = 3;
+                this.prizeID = 13;
+                if (debug) purpleBookItem.itemCount++;
             }
             if (randomPrize > 4500 && randomPrize <= 5000) {
                 this.prizeTexture = appleTexture;
                 this.prizeID = 14;
+                if (debug) appleItem.itemCount++;
             }
             if (randomPrize > 1284 && randomPrize <= 1712) {
                 this.prizeTexture = brownBookTexture;
                 prizeID = 15;
+                if (debug) brownBookItem.itemCount++;
             }
             if (randomPrize > 1712 && randomPrize <=  2140) {
                 this.prizeTexture = breadTexture;
                 prizeID = 16;
+                if (debug) breadItem.itemCount++;
             }
             if (randomPrize > 2140 && randomPrize <= 2568) {
                 this.prizeTexture = burgerTexture;
                 prizeID = 17;
+                if (debug) burgerItem.itemCount++;
             }
             if (randomPrize > 2568 && randomPrize <= 3000) {
                 this.prizeTexture = pizzaTexture;
                 prizeID = 18;
+                if (debug) pizzaItem.itemCount++;
             }
-            if (randomPrize > 6600 && randomPrize <= 8600) {
+            if (randomPrize > 6600 && randomPrize <= 7100) {
                 this.prizeTexture = bombTexture;
                 prizeID = 19;
             }
 
-            if (randomPrize > 8600 && randomPrize <= 9998) {
+            if (randomPrize > 7100 && randomPrize <= 9998) {
                 this.prizeTexture = emptyTexture;
                 prizeID = 0;// no prize ID is no prize
             }
 
-            Gdx.app.log("JSLOG", "Random prize " + randomPrize  + " set.");
+            Gdx.app.log("JSLOG", "prizeID " + prizeID  + " set.");
 
 
             //Assign the position of the bubble to a random value within the screen boundaries
@@ -887,13 +909,7 @@ public class SillyBubblesGame extends Game {
             background = new TextureRegion(new Texture("hillsxhdpi.png"));
 
         }
-/*        if (screenType == ScreenType.HDPI) {
-            bubbleCount = 5;
-            penguinWalking.scaleBy(1.875f);
-            background = new TextureRegion(new Texture("hillshdpi.png"));
-        }
-*/
-        if (screenType == ScreenType.MDPI || screenType == ScreenType.HDPI) {
+        if (screenType == ScreenType.HDPI) {
             bubbleImage.setScale(1f);
             diamondImage.setScale(1f);
             firstAidImage.setScale(1f);
@@ -913,7 +929,37 @@ public class SillyBubblesGame extends Game {
             breadImage.setScale(1f);
             burgerImage.setScale(1f);
             pizzaImage.setScale(1f);
-            bubbleCount = 5;
+            bubbleCount = 8;
+            scaleModifier = 0.5f;
+            speedModifier = 1;
+            penguinWalking.scaleBy(1f);
+            penguinWalking.setPosition(0, 96);
+            bubbleButton.setScale(.25f);
+            bubbleBackButton.setScale(.25f);
+            background = new TextureRegion(new Texture("hillshdpi.png"));
+        }
+
+        if (screenType == ScreenType.MDPI) {
+            bubbleImage.setScale(1f);
+            diamondImage.setScale(1f);
+            firstAidImage.setScale(1f);
+            starImage.setScale(1f);
+            bookImage.setScale(1f);
+            crystalImage.setScale(1f);
+            ringImage.setScale(1f);
+            jewel1Image.setScale(1f);
+            jewel2Image.setScale(1f);
+            jewel3Image.setScale(1f);
+            dragonImage.setScale(1f);
+            redDiamondImage.setScale(1f);
+            cameraImage.setScale(1f);
+            purpleBookImage.setScale(1f);
+            appleImage.setScale(1f);
+            brownBookImage.setScale(1f);
+            breadImage.setScale(1f);
+            burgerImage.setScale(1f);
+            pizzaImage.setScale(1f);
+            bubbleCount = 8;
             scaleModifier = 0.5f;
             speedModifier = 1;
             penguinWalking.scaleBy(1f);
@@ -972,7 +1018,6 @@ public class SillyBubblesGame extends Game {
         // we will button on top, because it's like a HUD
         stage.addActor(bubbleButton);
         stage.addActor(penguinWalking);
-
 
 //        menuStage.addActor(bubbleBackButton);
         menuStage.addActor(table);
