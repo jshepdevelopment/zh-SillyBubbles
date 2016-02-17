@@ -234,7 +234,7 @@ public class SillyBubblesGame extends Game {
 
         @Override
         public void act(float delta) {
-            this.setPosition(0, 0);//Gdx.graphics.getHeight() - _texture.getRegionHeight());
+            this.setPosition(0, getHeight());//Gdx.graphics.getHeight() - _texture.getRegionHeight());
         }
     }
 
@@ -242,7 +242,10 @@ public class SillyBubblesGame extends Game {
 	class Bubble extends Actor {
 
 		private TextureRegion texture;
-		private TextureRegion prizeTexture;
+		//private TextureRegion prizeTexture;
+
+        //prize texture upon initialization
+        TextureRegion prizeTexture = new TextureRegion(new Texture("empty.png"));
 
         // loading all textures
         TextureRegion diamondTexture = new TextureRegion(new Texture("diamond.png"));
@@ -758,75 +761,75 @@ public class SillyBubblesGame extends Game {
         scrollTable.add(collectionLabel).colspan(2);
         scrollTable.row();
         scrollTable.add(ringImage).left();
-        scrollTable.add(ringLabel).padBottom(2f);
+        scrollTable.add(ringLabel);
         scrollTable.row();
         // insanely rare items
         //scrollTable.add(insanelyRareLabel);
         //scrollTable.row();
         scrollTable.add(starImage).left();
-        scrollTable.add(starLabel).padBottom(2f);
+        scrollTable.add(starLabel);
         scrollTable.row();
         scrollTable.add(dragonImage).left();
-        scrollTable.add(dragonLabel).padBottom(2f);
+        scrollTable.add(dragonLabel);
         scrollTable.row();
         // ultra rare items
         //scrollTable.add(ultraRareLabel);
         //scrollTable.row();
         scrollTable.add(redDiamondImage).left();
-        scrollTable.add(redDiamondLabel).padBottom(2f);
+        scrollTable.add(redDiamondLabel);
         scrollTable.row();
         scrollTable.add(diamondImage).left();
-        scrollTable.add(diamondLabel).padBottom(2f);
+        scrollTable.add(diamondLabel);
         scrollTable.row();
         // very rare items
         //scrollTable.add(ultraRareLabel);
         //scrollTable.row();
         scrollTable.add(bookImage).left();
-        scrollTable.add(bookLabel).padBottom(2f);
+        scrollTable.add(bookLabel);
         scrollTable.row();
         scrollTable.add(cameraImage).left();
-        scrollTable.add(cameraLabel).padBottom(2f);
+        scrollTable.add(cameraLabel);
         scrollTable.row();
         // fairly rare items
         //scrollTable.add(fairlyRareLabel);
         //scrollTable.row();
         scrollTable.add(jewel3Image).left();
-        scrollTable.add(jewel3Label).padBottom(2f);
+        scrollTable.add(jewel3Label);
         scrollTable.row();
         scrollTable.add(purpleBookImage).left();
-        scrollTable.add(purpleBookLabel).padBottom(2f);
+        scrollTable.add(purpleBookLabel);
         scrollTable.row();
         scrollTable.add(appleImage).left();
-        scrollTable.add(appleLabel).padBottom(2f);
+        scrollTable.add(appleLabel);
         scrollTable.row();
         scrollTable.add(crystalImage).left();
-        scrollTable.add(crystalLabel).padBottom(2f);
+        scrollTable.add(crystalLabel);
         scrollTable.row();
         // common items
         //scrollTable.add(commonLabel);
         //scrollTable.row();
         scrollTable.add(brownBookImage).left();
-        scrollTable.add(brownBookLabel).padBottom(2f);
+        scrollTable.add(brownBookLabel);
         scrollTable.row();
         scrollTable.add(burgerImage).left();
-        scrollTable.add(burgerLabel).padBottom(2f);
+        scrollTable.add(burgerLabel);
         scrollTable.row();
         scrollTable.add(pizzaImage).left();
-        scrollTable.add(pizzaLabel).padBottom(2f);
+        scrollTable.add(pizzaLabel);
         scrollTable.row();
         scrollTable.add(firstAidImage).left();
-        scrollTable.add(firstAidLabel).padBottom(2f);
+        scrollTable.add(firstAidLabel);
         scrollTable.row();
         scrollTable.add(breadImage).left();
-        scrollTable.add(breadLabel).padBottom(2f);
+        scrollTable.add(breadLabel);
         scrollTable.row();
         scrollTable.add(jewel2Image).left();
-        scrollTable.add(jewel2Label).padBottom(2f);
+        scrollTable.add(jewel2Label);
         scrollTable.row();
         scrollTable.add(bubbleImage).left();
-        scrollTable.add(bubbleLabel).padBottom(2f);
+        scrollTable.add(bubbleLabel);
         scrollTable.row();
-        scrollTable.add(bubbleBackButton);
+        scrollTable.add(bubbleBackButton).colspan(2);
 
         // a ScrollPane to place table for scrolling
         final ScrollPane scroller = new ScrollPane(scrollTable);
