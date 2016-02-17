@@ -488,87 +488,87 @@ public class SillyBubblesGame extends Game {
             this.poof = false;
 
 			Random random = new Random();
-			int randomPrize = random.nextInt(35) + 1;
+			int randomPrize = random.nextInt(10000) + 1;
 
 			// set prize
-			if (randomPrize == 1) {
+			if (randomPrize > 6000 && randomPrize <= 6250) {
 				this.prizeTexture = diamondTexture;
 				this.prizeID = 1;
 			}
-			if (randomPrize == 2) {
+			if (randomPrize <= 428) {
 				this.prizeTexture = firstAidTexture;
 				this.prizeID = 2;
 			}
-			if (randomPrize == 3) {
+			if (randomPrize > 6500 && randomPrize <= 6550) {
 				this.prizeTexture = starTexture;
 				prizeID = 3;
 			}
-            if (randomPrize == 4) {
+            if (randomPrize > 5000 && randomPrize <= 5500) {
                 this.prizeTexture = bookTexture;
                 this.prizeID = 4;
             }
-            if (randomPrize == 5) {
+            if (randomPrize > 3500 && randomPrize <= 4000) {
                 this.prizeTexture = crystalTexture;
                 this.prizeID = 5;
             }
-            if (randomPrize == 6) {
+            if (randomPrize >= 9999) {
                 this.prizeTexture = ringTexture;
                 prizeID = 6;
             }
-            if (randomPrize == 7) {
+            if (randomPrize > 428 && randomPrize <= 856) {
                 this.prizeTexture = jewel1Texture;
                 prizeID = 7;
             }
-            if (randomPrize == 8) {
+            if (randomPrize >856 && randomPrize <= 1284) {
                 this.prizeTexture = jewel2Texture;
                 prizeID = 8;
             }
-            if (randomPrize == 9) {
+            if (randomPrize > 3000 && randomPrize <= 3500 ) {
                 this.prizeTexture = jewel3Texture;
                 prizeID = 9;
             }
-            if (randomPrize == 10) {
+            if (randomPrize > 6550 && randomPrize <= 6600) {
                 this.prizeTexture = dragonTexture;
                 this.prizeID = 10;
             }
-            if (randomPrize == 11) {
+            if (randomPrize > 6250 && randomPrize <= 6500) {
                 this.prizeTexture = redDiamondTexture;
                 this.prizeID = 11;
             }
-            if (randomPrize == 12) {
+            if (randomPrize > 5500 && randomPrize <= 6000) {
                 this.prizeTexture = cameraTexture;
                 prizeID = 12;
             }
-            if (randomPrize == 13) {
+            if (randomPrize > 4000 && randomPrize <= 4500 ) {
                 this.prizeTexture = purpleBookTexture;
                 this.prizeID = 3;
             }
-            if (randomPrize == 14) {
+            if (randomPrize > 4500 && randomPrize <= 5000) {
                 this.prizeTexture = appleTexture;
                 this.prizeID = 14;
             }
-            if (randomPrize == 15) {
+            if (randomPrize > 1284 && randomPrize <= 1712) {
                 this.prizeTexture = brownBookTexture;
                 prizeID = 15;
             }
-            if (randomPrize == 16) {
+            if (randomPrize > 1712 && randomPrize <=  2140) {
                 this.prizeTexture = breadTexture;
                 prizeID = 16;
             }
-            if (randomPrize == 17) {
+            if (randomPrize > 2140 && randomPrize <= 2568) {
                 this.prizeTexture = burgerTexture;
                 prizeID = 17;
             }
-            if (randomPrize == 18) {
+            if (randomPrize > 2568 && randomPrize <= 3000) {
                 this.prizeTexture = pizzaTexture;
                 prizeID = 18;
             }
-            if (randomPrize == 19) {
+            if (randomPrize > 6600 && randomPrize <= 8600) {
                 this.prizeTexture = bombTexture;
                 prizeID = 19;
             }
 
-            if (randomPrize > 20) {
+            if (randomPrize > 8600 && randomPrize <= 9998) {
                 this.prizeTexture = emptyTexture;
                 prizeID = 0;// no prize ID is no prize
             }
