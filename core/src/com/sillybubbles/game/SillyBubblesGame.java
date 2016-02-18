@@ -88,7 +88,7 @@ public class SillyBubblesGame extends Game {
     Label ultraRareLabel;
     Label veryRareLabel;
     Label fairlyRareLabel;
-    Label commonLabel;
+    Label niceLabel;
 
     Label waitingLabel;
     Label waitingCounterLabel;
@@ -234,7 +234,7 @@ public class SillyBubblesGame extends Game {
 
         @Override
         public void act(float delta) {
-            this.setPosition(0, getHeight());//Gdx.graphics.getHeight() - _texture.getRegionHeight());
+            this.setPosition(getParent().getX(), getParent().getY()/getParent().getY());//Gdx.graphics.getHeight() - _texture.getRegionHeight());
         }
     }
 
@@ -294,8 +294,8 @@ public class SillyBubblesGame extends Game {
             this.scaleModifier = scaleModifier;
 
             this.pe.load(Gdx.files.internal("bubblepop.p"), Gdx.files.internal(""));
-            this.pe.getEmitters().first().setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
-            this.pe.scaleEffect(scaleModifier/2);
+            this.pe.getEmitters().first().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+            this.pe.scaleEffect(scaleModifier);
 
             Random random = new Random();
             int randomBubble = random.nextInt(8) + 1;
@@ -462,7 +462,7 @@ public class SillyBubblesGame extends Game {
 
             if(waiting) {
                 elapsedTime = TimeUtils.timeSinceMillis(startTime);
-                Gdx.app.log("JSLOG", "elapsed time is " + elapsedTime);
+                //Gdx.app.log("JSLOG", "elapsed time is " + elapsedTime);
 
                 waitingCounterLabel.setText("" + (6 - (1 + elapsedTime / 1000)));
 
@@ -641,6 +641,7 @@ public class SillyBubblesGame extends Game {
         //int baseHeight  = 480; // not sure if this will be necessary
 
         if ( screenWidth <  baseWidth ) screenType = ScreenType.LDPI;
+        if ( screenWidth >= baseWidth * 1 ) screenType = ScreenType.MDPI;
         if ( screenWidth >= baseWidth * 1.5 ) screenType = ScreenType.HDPI;
         if ( screenWidth >= baseWidth * 2 ) screenType = ScreenType.XHDPI;
         if ( screenWidth >= baseWidth * 3 ) screenType = ScreenType.XXHDPI;
@@ -768,7 +769,7 @@ public class SillyBubblesGame extends Game {
         ultraRareLabel = new Label("Impossibly Rare: ", labelStyle);
         veryRareLabel = new Label("Very Rare: ", labelStyle);
         fairlyRareLabel = new Label("Fairly Rare: ", labelStyle);
-        commonLabel = new Label("Common: ", labelStyle);
+        niceLabel = new Label("Nice!", labelStyle);
 
         final TextureRegion bubbleBackButtonTexture = new TextureRegion(new Texture("bubblebackbutton.png"));
         BubbleBackButton bubbleBackButton = new BubbleBackButton(bubbleBackButtonTexture);
@@ -851,6 +852,8 @@ public class SillyBubblesGame extends Game {
         scrollTable.add(bubbleImage).left();
         scrollTable.add(bubbleLabel);
         scrollTable.row();
+        scrollTable.add(niceLabel).colspan(2);
+        scrollTable.row();
         scrollTable.add(bubbleBackButton).colspan(2);
 
         // a ScrollPane to place table for scrolling
@@ -898,44 +901,90 @@ public class SillyBubblesGame extends Game {
 
         }
         if (screenType == ScreenType.XXHDPI) {
-            bubbleCount = 10;
-            penguinWalking.scaleBy(3.25f);
+            bubbleImage.setScale(2.5f);
+            diamondImage.setScale(2.5f);
+            firstAidImage.setScale(2.5f);
+            starImage.setScale(2.5f);
+            bookImage.setScale(2.5f);
+            crystalImage.setScale(2.5f);
+            ringImage.setScale(2.5f);
+            jewel1Image.setScale(2.5f);
+            jewel2Image.setScale(2.5f);
+            jewel3Image.setScale(2.5f);
+            dragonImage.setScale(2.5f);
+            redDiamondImage.setScale(2.5f);
+            cameraImage.setScale(2.5f);
+            purpleBookImage.setScale(2.5f);
+            appleImage.setScale(2.5f);
+            brownBookImage.setScale(2.5f);
+            breadImage.setScale(2.5f);
+            burgerImage.setScale(2.5f);
+            pizzaImage.setScale(2.5f);
+            bubbleCount = 12;
+            scaleModifier = 1.8f;
+            speedModifier = 3;
+            penguinWalking.scaleBy(5f);
+            penguinWalking.setPosition(0, 300);
             background = new TextureRegion(new Texture("hillsxxhdpi.png"));
 
         }
         if (screenType == ScreenType.XHDPI) {
-            bubbleCount = 8;
+            bubbleImage.setScale(1.5f);
+            diamondImage.setScale(1.5f);
+            firstAidImage.setScale(1.5f);
+            starImage.setScale(1.5f);
+            bookImage.setScale(1.5f);
+            crystalImage.setScale(1.5f);
+            ringImage.setScale(1.5f);
+            jewel1Image.setScale(1.5f);
+            jewel2Image.setScale(1.5f);
+            jewel3Image.setScale(1.5f);
+            dragonImage.setScale(1.5f);
+            redDiamondImage.setScale(1.5f);
+            cameraImage.setScale(1.5f);
+            purpleBookImage.setScale(1.5f);
+            appleImage.setScale(1.5f);
+            brownBookImage.setScale(1.5f);
+            breadImage.setScale(1.5f);
+            burgerImage.setScale(1.5f);
+            pizzaImage.setScale(1.5f);
+            bubbleCount = 12;
+            scaleModifier = 1.5f;
+            speedModifier = 3;
             penguinWalking.scaleBy(2.5f);
+            penguinWalking.setPosition(0, 200);
+            bubbleButton.setScale(.5f);
+            bubbleBackButton.setScale(.5f);
             background = new TextureRegion(new Texture("hillsxhdpi.png"));
 
         }
         if (screenType == ScreenType.HDPI) {
-            bubbleImage.setScale(1f);
-            diamondImage.setScale(1f);
-            firstAidImage.setScale(1f);
-            starImage.setScale(1f);
-            bookImage.setScale(1f);
-            crystalImage.setScale(1f);
-            ringImage.setScale(1f);
-            jewel1Image.setScale(1f);
-            jewel2Image.setScale(1f);
-            jewel3Image.setScale(1f);
-            dragonImage.setScale(1f);
-            redDiamondImage.setScale(1f);
-            cameraImage.setScale(1f);
-            purpleBookImage.setScale(1f);
-            appleImage.setScale(1f);
-            brownBookImage.setScale(1f);
-            breadImage.setScale(1f);
-            burgerImage.setScale(1f);
-            pizzaImage.setScale(1f);
-            bubbleCount = 8;
-            scaleModifier = 0.5f;
-            speedModifier = 1;
-            penguinWalking.scaleBy(1f);
-            penguinWalking.setPosition(0, 96);
-            bubbleButton.setScale(.25f);
-            bubbleBackButton.setScale(.25f);
+            bubbleImage.setScale(1.25f);
+            diamondImage.setScale(1.25f);
+            firstAidImage.setScale(1.25f);
+            starImage.setScale(1.25f);
+            bookImage.setScale(1.25f);
+            crystalImage.setScale(1.25f);
+            ringImage.setScale(1.25f);
+            jewel1Image.setScale(1.25f);
+            jewel2Image.setScale(1.25f);
+            jewel3Image.setScale(1.25f);
+            dragonImage.setScale(1.25f);
+            redDiamondImage.setScale(1.25f);
+            cameraImage.setScale(1.25f);
+            purpleBookImage.setScale(1.25f);
+            appleImage.setScale(1.25f);
+            brownBookImage.setScale(1.25f);
+            breadImage.setScale(1.25f);
+            burgerImage.setScale(1.25f);
+            pizzaImage.setScale(1.25f);
+            bubbleCount = 10;
+            scaleModifier = 1.0f;
+            speedModifier = 2;
+            penguinWalking.scaleBy(2f);
+            penguinWalking.setPosition(0, 150);
+            bubbleButton.setScale(.35f);
+            bubbleBackButton.setScale(.35f);
             background = new TextureRegion(new Texture("hillshdpi.png"));
         }
 
@@ -960,7 +1009,7 @@ public class SillyBubblesGame extends Game {
             burgerImage.setScale(1f);
             pizzaImage.setScale(1f);
             bubbleCount = 8;
-            scaleModifier = 0.5f;
+            scaleModifier = .8f;
             speedModifier = 1;
             penguinWalking.scaleBy(1f);
             penguinWalking.setPosition(0, 96);
@@ -969,7 +1018,32 @@ public class SillyBubblesGame extends Game {
             background = new TextureRegion(new Texture("hillsmdpi.png"));
         }
         if (screenType == ScreenType.LDPI)  {
-            penguinWalking.scaleBy(1.0f);
+            bubbleImage.setScale(1f);
+            diamondImage.setScale(1f);
+            firstAidImage.setScale(1f);
+            starImage.setScale(1f);
+            bookImage.setScale(1f);
+            crystalImage.setScale(1f);
+            ringImage.setScale(1f);
+            jewel1Image.setScale(1f);
+            jewel2Image.setScale(1f);
+            jewel3Image.setScale(1f);
+            dragonImage.setScale(1f);
+            redDiamondImage.setScale(1f);
+            cameraImage.setScale(1f);
+            purpleBookImage.setScale(1f);
+            appleImage.setScale(1f);
+            brownBookImage.setScale(1f);
+            breadImage.setScale(1f);
+            burgerImage.setScale(1f);
+            pizzaImage.setScale(1f);
+            bubbleCount = 8;
+            scaleModifier = .8f;
+            speedModifier = 1;
+            penguinWalking.scaleBy(1f);
+            penguinWalking.setPosition(0, 96);
+            bubbleButton.setScale(.25f);
+            bubbleBackButton.setScale(.25f);
             background = new TextureRegion(new Texture("hillsmdpi.png"));
         }
 
