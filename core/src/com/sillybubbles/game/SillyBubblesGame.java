@@ -660,35 +660,41 @@ public class SillyBubblesGame extends Game {
             parameter.size = 72;
             parameter.borderWidth = 3;
             parameterLarge.size = 288;
+            parameterLarge.borderWidth = 3;
         }
         if (screenType == ScreenType.XXHDPI) {
             parameter.size = 54;
             parameter.borderWidth = 3;
             parameterLarge.size = 108;
+            parameterLarge.borderWidth = 3;
         }
         if (screenType == ScreenType.XHDPI){
             parameter.size = 36;
             parameter.borderWidth = 2;
             parameterLarge.size = 72;
+            parameterLarge.borderWidth = 2;
         }
         if (screenType == ScreenType.HDPI) {
             parameter.size = 27;
             parameter.borderWidth = 2;
             parameterLarge.size = 54;
+            parameterLarge.borderWidth = 2;
         }
         if (screenType == ScreenType.MDPI){
             parameter.size = 20;
             parameter.borderWidth = 1;
             parameterLarge.size = 36;
+            parameterLarge.borderWidth = 1;
         }
         if (screenType == ScreenType.LDPI){
             parameter.size = 12;
             parameter.borderWidth = 1;
             parameterLarge.size = 18;
+            parameterLarge.borderWidth = 1;
         }
 
         parameter.borderColor = Color.BLACK;
-        parameterLarge.borderWidth = 3;
+
 
         textFont = generator.generateFont(parameter);
         textFontLarge = generator.generateFont(parameterLarge);
