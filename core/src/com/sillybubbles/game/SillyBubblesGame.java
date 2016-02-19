@@ -234,7 +234,7 @@ public class SillyBubblesGame extends Game {
 
         @Override
         public void act(float delta) {
-            this.setPosition(getParent().getX(), getParent().getY()/getParent().getY());//Gdx.graphics.getHeight() - _texture.getRegionHeight());
+            this.setPosition(getParent().getX(), getHeight());//Gdx.graphics.getHeight() - _texture.getRegionHeight());
         }
     }
 
@@ -658,31 +658,36 @@ public class SillyBubblesGame extends Game {
         // set font size based on screen type
         if (screenType == ScreenType.XXXHDPI){
             parameter.size = 72;
+            parameter.borderWidth = 3;
             parameterLarge.size = 288;
         }
         if (screenType == ScreenType.XXHDPI) {
             parameter.size = 54;
+            parameter.borderWidth = 3;
             parameterLarge.size = 108;
         }
         if (screenType == ScreenType.XHDPI){
             parameter.size = 36;
+            parameter.borderWidth = 2;
             parameterLarge.size = 72;
         }
         if (screenType == ScreenType.HDPI) {
             parameter.size = 27;
+            parameter.borderWidth = 2;
             parameterLarge.size = 54;
         }
         if (screenType == ScreenType.MDPI){
-            parameter.size = 18;
+            parameter.size = 20;
+            parameter.borderWidth = 1;
             parameterLarge.size = 36;
         }
         if (screenType == ScreenType.LDPI){
-            parameter.size = 9;
+            parameter.size = 12;
+            parameter.borderWidth = 1;
             parameterLarge.size = 18;
         }
 
         parameter.borderColor = Color.BLACK;
-        parameter.borderWidth = 3;
         parameterLarge.borderWidth = 3;
 
         textFont = generator.generateFont(parameter);
@@ -738,6 +743,8 @@ public class SillyBubblesGame extends Game {
         Image breadImage = new Image(new TextureRegion((new Texture("bread.png"))));
         Image burgerImage = new Image(new TextureRegion((new Texture("burger.png"))));
         Image pizzaImage = new Image(new TextureRegion((new Texture("pizza.png"))));
+        Image emptyImage = new Image(new TextureRegion((new Texture("empty.png"))));
+
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(textFont, Color.WHITE);
         Label.LabelStyle labelStyleLarge = new Label.LabelStyle(textFontLarge, Color.YELLOW);
@@ -853,6 +860,8 @@ public class SillyBubblesGame extends Game {
         scrollTable.add(bubbleLabel);
         scrollTable.row();
         scrollTable.add(niceLabel).colspan(2);
+        scrollTable.row();
+        scrollTable.add(emptyImage);
         scrollTable.row();
         scrollTable.add(bubbleBackButton).colspan(2);
 
