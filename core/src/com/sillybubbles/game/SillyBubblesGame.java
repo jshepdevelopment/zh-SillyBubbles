@@ -669,25 +669,25 @@ public class SillyBubblesGame extends Game {
             parameterLarge.borderWidth = 3;
         }
         if (screenType == ScreenType.XHDPI){
-            parameter.size = 36;
+            parameter.size = 48;
             parameter.borderWidth = 2;
             parameterLarge.size = 72;
             parameterLarge.borderWidth = 2;
         }
         if (screenType == ScreenType.HDPI) {
-            parameter.size = 27;
+            parameter.size = 36;
             parameter.borderWidth = 2;
             parameterLarge.size = 54;
             parameterLarge.borderWidth = 2;
         }
         if (screenType == ScreenType.MDPI){
-            parameter.size = 20;
+            parameter.size = 24;
             parameter.borderWidth = 1;
             parameterLarge.size = 36;
             parameterLarge.borderWidth = 1;
         }
         if (screenType == ScreenType.LDPI){
-            parameter.size = 12;
+            parameter.size = 18;
             parameter.borderWidth = 1;
             parameterLarge.size = 18;
             parameterLarge.borderWidth = 1;
