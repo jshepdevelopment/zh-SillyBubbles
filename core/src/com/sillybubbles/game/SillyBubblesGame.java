@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -23,6 +25,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.BufferUtils;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -234,7 +238,63 @@ public class SillyBubblesGame extends Game {
 
         @Override
         public void act(float delta) {
-            this.setPosition(getParent().getX(), getHeight());//Gdx.graphics.getHeight() - _texture.getRegionHeight());
+            this.setPosition(0, 0);//Gdx.graphics.getHeight() - _texture.getRegionHeight());
+        }
+    }
+
+    //screenshot button
+    class ScreenShotButton extends Actor {
+        private TextureRegion _texture;
+
+        public ScreenShotButton(TextureRegion texture){
+            // set bounds
+            _texture = texture;
+            setBounds(getX(), getY(), _texture.getRegionWidth(), _texture.getRegionHeight());
+
+            // get input
+            this.addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons) {
+                    return true;
+                }
+            });
+        }
+
+        // implements draw() completely to handle rotation and scaling
+        public void draw(Batch batch, float alpha) {
+            batch.draw(_texture, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
+                    getScaleX(), getScaleY(), getRotation());
+        }
+
+        public Actor hit(float x, float y, boolean touchable) {
+
+            // get centerpoint of bounding circle, also known as the center of the rect
+            float centerX = getWidth() / 2;
+            float centerY = getHeight() / 2;
+
+            // Calculate radius of circle
+            float radius = (float) Math.sqrt(centerX * centerX +
+                    centerY * centerY);
+
+            // And distance of point from the center of the circle
+            float distance = (float) Math.sqrt(((centerX - x) * (centerX - x))
+                    + ((centerY - y) * (centerY - y)));
+
+            // If the distance is less than the circle radius, it's a hit
+            if (distance <= radius) {
+                if (Gdx.input.justTouched()) {
+                    Gdx.app.log("JSLOG", "Screenshot button pressed.");
+                    takeScreenshot();
+                }
+            }
+
+            // button not pressed, return null
+            return null;
+        }
+
+        @Override
+        public void act(float delta) {
+            //this.setPosition(getParent().getX(), getHeight());//Gdx.graphics.getHeight() - _texture.getRegionHeight());
+            this.setPosition(Gdx.graphics.getWidth()-this.getWidth(), 0);//Gdx.graphics.getHeight() - _texture.getRegionHeight());
         }
     }
 
@@ -649,7 +709,6 @@ public class SillyBubblesGame extends Game {
 
         Gdx.app.log("JSLOG", "screenType is " + screenType.toString());
 
-
         // setting up font
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("cartoon.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -694,7 +753,6 @@ public class SillyBubblesGame extends Game {
         }
 
         parameter.borderColor = Color.BLACK;
-
 
         textFont = generator.generateFont(parameter);
         textFontLarge = generator.generateFont(parameterLarge);
@@ -751,7 +809,6 @@ public class SillyBubblesGame extends Game {
         Image pizzaImage = new Image(new TextureRegion((new Texture("pizza.png"))));
         Image emptyImage = new Image(new TextureRegion((new Texture("empty.png"))));
 
-
         Label.LabelStyle labelStyle = new Label.LabelStyle(textFont, Color.WHITE);
         Label.LabelStyle labelStyleLarge = new Label.LabelStyle(textFontLarge, Color.YELLOW);
 
@@ -784,8 +841,13 @@ public class SillyBubblesGame extends Game {
         fairlyRareLabel = new Label("Fairly Rare: ", labelStyle);
         niceLabel = new Label("Nice!", labelStyle);
 
-        final TextureRegion bubbleBackButtonTexture = new TextureRegion(new Texture("bubblebackbutton.png"));
+        // adding the menu back button
+        final TextureRegion bubbleBackButtonTexture = new TextureRegion(new Texture("backbutton.png"));
         BubbleBackButton bubbleBackButton = new BubbleBackButton(bubbleBackButtonTexture);
+
+        // adding a screenshot button
+        final TextureRegion screenShotButtonTexture = new TextureRegion(new Texture("screenshotbutton.png"));
+        ScreenShotButton screenShotButton = new ScreenShotButton(screenShotButtonTexture);
 
         // table to store item count labels
         final Table scrollTable = new Table();
@@ -802,8 +864,8 @@ public class SillyBubblesGame extends Game {
         // insanely rare items
         //scrollTable.add(insanelyRareLabel);
         //scrollTable.row();
-        scrollTable.add(starImage).left();
-        scrollTable.add(starLabel);
+        scrollTable.add(redDiamondImage).left();
+        scrollTable.add(redDiamondLabel);
         scrollTable.row();
         scrollTable.add(dragonImage).left();
         scrollTable.add(dragonLabel);
@@ -811,11 +873,11 @@ public class SillyBubblesGame extends Game {
         // ultra rare items
         //scrollTable.add(ultraRareLabel);
         //scrollTable.row();
-        scrollTable.add(redDiamondImage).left();
-        scrollTable.add(redDiamondLabel);
+        scrollTable.add(jewel1Image).left();
+        scrollTable.add(jewel1Label);
         scrollTable.row();
-        scrollTable.add(diamondImage).left();
-        scrollTable.add(diamondLabel);
+        scrollTable.add(jewel2Image).left();
+        scrollTable.add(jewel2Label);
         scrollTable.row();
         // very rare items
         //scrollTable.add(ultraRareLabel);
@@ -827,10 +889,8 @@ public class SillyBubblesGame extends Game {
         scrollTable.add(cameraLabel);
         scrollTable.row();
         // fairly rare items
-        //scrollTable.add(fairlyRareLabel);
-        //scrollTable.row();
-        scrollTable.add(jewel3Image).left();
-        scrollTable.add(jewel3Label);
+        scrollTable.add(crystalImage).left();
+        scrollTable.add(crystalLabel);
         scrollTable.row();
         scrollTable.add(purpleBookImage).left();
         scrollTable.add(purpleBookLabel);
@@ -838,12 +898,10 @@ public class SillyBubblesGame extends Game {
         scrollTable.add(appleImage).left();
         scrollTable.add(appleLabel);
         scrollTable.row();
-        scrollTable.add(crystalImage).left();
-        scrollTable.add(crystalLabel);
+        scrollTable.add(jewel3Image).left();
+        scrollTable.add(jewel3Label);
         scrollTable.row();
         // common items
-        //scrollTable.add(commonLabel);
-        //scrollTable.row();
         scrollTable.add(brownBookImage).left();
         scrollTable.add(brownBookLabel);
         scrollTable.row();
@@ -856,11 +914,14 @@ public class SillyBubblesGame extends Game {
         scrollTable.add(firstAidImage).left();
         scrollTable.add(firstAidLabel);
         scrollTable.row();
+        scrollTable.add(diamondImage).left();
+        scrollTable.add(diamondLabel);
+        scrollTable.row();
         scrollTable.add(breadImage).left();
         scrollTable.add(breadLabel);
         scrollTable.row();
-        scrollTable.add(jewel2Image).left();
-        scrollTable.add(jewel2Label);
+        scrollTable.add(starImage).left();
+        scrollTable.add(starLabel);
         scrollTable.row();
         scrollTable.add(bubbleImage).left();
         scrollTable.add(bubbleLabel);
@@ -868,11 +929,10 @@ public class SillyBubblesGame extends Game {
         scrollTable.add(niceLabel).colspan(2);
         scrollTable.row();
         scrollTable.add(emptyImage);
-        scrollTable.row();
-        scrollTable.add(bubbleBackButton).colspan(2);
 
         // a ScrollPane to place table for scrolling
         final ScrollPane scroller = new ScrollPane(scrollTable);
+        scroller.setFadeScrollBars(false);
 
         final Table table = new Table();
         table.setFillParent(true);
@@ -880,11 +940,10 @@ public class SillyBubblesGame extends Game {
         table.add(scroller).fill().expand();
 
         // button textures
-        final TextureRegion bubbleButtonTexture = new TextureRegion(new Texture("bubblebutton.png"));
+        final TextureRegion bubbleButtonTexture = new TextureRegion(new Texture("treasurechest.png"));
 
         // add a bubbleButton
         BubbleButton bubbleButton = new BubbleButton(bubbleButtonTexture);
-
 
         // change size based on screen type
         if (screenType == ScreenType.XXXHDPI) {
@@ -970,6 +1029,7 @@ public class SillyBubblesGame extends Game {
             penguinWalking.setPosition(0, 200);
             bubbleButton.setScale(.5f);
             bubbleBackButton.setScale(.5f);
+            screenShotButton.setScale(.5f);
             background = new TextureRegion(new Texture("hillsxhdpi.png"));
 
         }
@@ -1000,6 +1060,7 @@ public class SillyBubblesGame extends Game {
             penguinWalking.setPosition(0, 150);
             bubbleButton.setScale(.35f);
             bubbleBackButton.setScale(.35f);
+            screenShotButton.setScale(.35f);
             background = new TextureRegion(new Texture("hillshdpi.png"));
         }
 
@@ -1030,6 +1091,7 @@ public class SillyBubblesGame extends Game {
             penguinWalking.setPosition(0, 96);
             bubbleButton.setScale(.25f);
             bubbleBackButton.setScale(.25f);
+            screenShotButton.setScale(.25f);
             background = new TextureRegion(new Texture("hillsmdpi.png"));
         }
         if (screenType == ScreenType.LDPI)  {
@@ -1059,6 +1121,7 @@ public class SillyBubblesGame extends Game {
             penguinWalking.setPosition(0, 96);
             bubbleButton.setScale(.25f);
             bubbleBackButton.setScale(.25f);
+            screenShotButton.setScale(.25f);
             background = new TextureRegion(new Texture("hillsmdpi.png"));
         }
 
@@ -1073,16 +1136,11 @@ public class SillyBubblesGame extends Game {
 
         // finally a waiting stage to display if player pops bubble with bomb
         waitingStage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-
-
         rbg = new ParallaxBackground(new ParallaxLayer[]{
 				//	new ParallaxLayer(background, new Vector2(),new Vector2(0, 0)),
 				new ParallaxLayer(background,new Vector2(1.0f,1.0f),new Vector2(0, 500)),
 				//	new ParallaxLayer(background,new Vector2(0.1f,0),new Vector2(0, stage.getViewport().getScreenHeight()-200),new Vector2(0, 0)),
 		}, stage.getViewport().getScreenWidth(), stage.getViewport().getScreenHeight(), new Vector2(150,0));
-
-        //for debugging
-        speedModifier = 10;
 
 		// initialize arrays for bubbles
 		bubbles = new Bubble[bubbleCount];
@@ -1090,26 +1148,20 @@ public class SillyBubblesGame extends Game {
 		// make 10 bubble objects at random on screen locations
 		for(int i = 0; i < bubbleCount; i++){
 			bubbles[i] = new Bubble(speedModifier, scaleModifier);
-			//moveActions[i] = new MoveToAction();
-            			// random.nextInt(Gdx.graphics.getWidth());
-
-			// set the name of the bubble to it's index within the loop
             bubbles[i].setName(Integer.toString(i));
             bubbles[i].reset();
-
-            //bubbles[i].setScale( scaleModifier);
-
 			// add to the stage
 			stage.addActor(bubbles[i]);
-
 		}
 
-        // we will button on top, because it's like a HUD
+        // main stage actors, other than bubbles
         stage.addActor(bubbleButton);
         stage.addActor(penguinWalking);
 
-//        menuStage.addActor(bubbleBackButton);
+        // menu stage actors
         menuStage.addActor(table);
+        menuStage.addActor(bubbleBackButton);
+        menuStage.addActor(screenShotButton);
 
         // get input
         Gdx.input.setInputProcessor(stage);
@@ -1123,6 +1175,8 @@ public class SillyBubblesGame extends Game {
 
         waitingLabel.setPosition(0, 0);
         waitingStage.addActor(waitingLabel);
+
+
 
 	}
 
@@ -1195,7 +1249,6 @@ public class SillyBubblesGame extends Game {
         prefs.putInteger(burgerItem.itemName, burgerItem.itemCount);
         prefs.putInteger(pizzaItem.itemName, pizzaItem.itemCount);
         prefs.flush(); // saves the preferences file
-
         Gdx.app.log("JSLOG", "Game Paused.");
 		//Gdx.app.log("JSLOG", "You have " + diamondItem.getItemCount() + " diamonds.");
 
@@ -1205,4 +1258,14 @@ public class SillyBubblesGame extends Game {
 	public void resume() {
 		Gdx.app.log("JSLOG", "Game On.");
 	}
+
+    public void takeScreenshot() {
+        byte[] pixels = ScreenUtils.getFrameBufferPixels(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+
+        Pixmap pixmap = new Pixmap(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Pixmap.Format.RGBA8888);
+        BufferUtils.copy(pixels, 0, pixmap.getPixels(), pixels.length);
+        PixmapIO.writePNG(Gdx.files.external("SillyBubbles/sillybubblescapture.png"), pixmap);
+        pixmap.dispose();
+        Gdx.app.log("JSLOG", "Screenshot saved as SillyBubbles/sillybubbles.png");
+    }
 }
