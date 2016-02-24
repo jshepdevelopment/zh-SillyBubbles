@@ -95,6 +95,7 @@ public class SillyBubblesGame extends Game {
     Label niceLabel;
 
     Label waitingLabel;
+    Label screenshotSavedLabel;
     Label waitingCounterLabel;
 
     long startTime;
@@ -108,6 +109,7 @@ public class SillyBubblesGame extends Game {
 
     boolean playing = true; // flag to switch between playing and checking items
     boolean waiting = false;
+    boolean needScreenshot = false;
 
     class BubbleButton extends Actor {
         private TextureRegion _texture;
@@ -229,6 +231,7 @@ public class SillyBubblesGame extends Game {
                     Gdx.input.setInputProcessor(stage);
                     playing = true;
                     Gdx.app.log("JSLOG", "playing should be true, playing is " + playing);
+                    screenshotSavedLabel.remove();
                 }
             }
 
@@ -283,7 +286,7 @@ public class SillyBubblesGame extends Game {
             if (distance <= radius) {
                 if (Gdx.input.justTouched()) {
                     Gdx.app.log("JSLOG", "Screenshot button pressed.");
-                    takeScreenshot();
+                    needScreenshot = true;
                 }
             }
 
@@ -551,7 +554,7 @@ public class SillyBubblesGame extends Game {
 			int randomPrize = random.nextInt(50000) + 1;
 
             // special debug flag
-            boolean debug = true;
+            boolean debug = false;
 
 			// set prize
 			if (randomPrize > 6000 && randomPrize <= 9000) {
@@ -1168,17 +1171,17 @@ public class SillyBubblesGame extends Game {
 
         // for waiting
         waitingLabel = new Label("Bomb! You must wait. Ha ha ha.", labelStyle);
-
         waitingCounterLabel = new Label("0", labelStyleLarge);
-        waitingCounterLabel.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+        waitingCounterLabel.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         waitingStage.addActor(waitingCounterLabel);
 
         waitingLabel.setPosition(0, 0);
         waitingStage.addActor(waitingLabel);
 
-
-
-	}
+        //screenshot saved label
+        screenshotSavedLabel = new Label("Screenshot saved.", labelStyle);
+        screenshotSavedLabel.setPosition((Gdx.graphics.getWidth() / 2)/2, 0);
+    }
 
 	@Override
 	public void dispose() {
@@ -1208,6 +1211,11 @@ public class SillyBubblesGame extends Game {
             menuStage.draw();
         }
 
+        if (needScreenshot) {
+            takeScreenshot();
+            menuStage.addActor(screenshotSavedLabel);
+            needScreenshot = false;
+        }
 	}
 
 	@Override
