@@ -87,11 +87,6 @@ public class SillyBubblesGame extends Game {
     Label pizzaLabel;
 
     Label collectionLabel;
-    Label impossiblyRareLabel;
-    Label insanelyRareLabel;
-    Label ultraRareLabel;
-    Label veryRareLabel;
-    Label fairlyRareLabel;
     Label niceLabel;
 
     Label waitingLabel;
@@ -342,8 +337,6 @@ public class SillyBubblesGame extends Game {
         TextureRegion bubbleRedTexture = new TextureRegion(new Texture("bubblered.png"));
         TextureRegion bubbleYellowTexture = new TextureRegion(new Texture("bubbleyellow.png"));
 
-
-        boolean poof = false; // used to 'pop' the bubble
 		int prizeID = 0;
 		int speed = 0;
         ParticleEffect pe = new ParticleEffect();
@@ -547,8 +540,6 @@ public class SillyBubblesGame extends Game {
         }
 
 		public void reset() {
-
-            this.poof = false;
 
 			Random random = new Random();
 			int randomPrize = random.nextInt(50000) + 1;
@@ -837,11 +828,6 @@ public class SillyBubblesGame extends Game {
 
         collectionLabel = new Label("-Your Collection-", labelStyle);
 
-        impossiblyRareLabel = new Label("Impossibly Rare: ", labelStyle);
-        insanelyRareLabel = new Label("Insanely Rare: ", labelStyle);
-        ultraRareLabel = new Label("Impossibly Rare: ", labelStyle);
-        veryRareLabel = new Label("Very Rare: ", labelStyle);
-        fairlyRareLabel = new Label("Fairly Rare: ", labelStyle);
         niceLabel = new Label("Nice!", labelStyle);
 
         // adding the menu back button
@@ -1178,6 +1164,10 @@ public class SillyBubblesGame extends Game {
         waitingLabel.setPosition(0, 0);
         waitingStage.addActor(waitingLabel);
 
+
+
+
+
         //screenshot saved label
         screenshotSavedLabel = new Label("Screenshot saved.", labelStyle);
         screenshotSavedLabel.setPosition((Gdx.graphics.getWidth() / 2)/2, 0);
@@ -1269,7 +1259,6 @@ public class SillyBubblesGame extends Game {
 
     public void takeScreenshot() {
         byte[] pixels = ScreenUtils.getFrameBufferPixels(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-
         Pixmap pixmap = new Pixmap(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Pixmap.Format.RGBA8888);
         BufferUtils.copy(pixels, 0, pixmap.getPixels(), pixels.length);
         PixmapIO.writePNG(Gdx.files.external("SillyBubbles/sillybubblescapture.png"), pixmap);
