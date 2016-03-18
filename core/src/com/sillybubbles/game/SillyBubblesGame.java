@@ -87,7 +87,6 @@ public class SillyBubblesGame extends Game {
     Label pizzaLabel;
 
     Label collectionLabel;
-    Label rewardLabel;
     Label niceLabel;
 
     Label waitingLabel;
@@ -107,7 +106,6 @@ public class SillyBubblesGame extends Game {
     boolean waiting = false;
     boolean needScreenshot = false;
     boolean firstRun = true; // this is the first run of the game
-    boolean adLoyaltyReward = false; // remove interstitial ad for loyalty
 
     class BubbleButton extends Actor {
         private TextureRegion _texture;
@@ -833,11 +831,8 @@ public class SillyBubblesGame extends Game {
         breadLabel = new Label(" " + breadItem.itemCount, labelStyle);
         burgerLabel = new Label(" " + burgerItem.itemCount, labelStyle);
         pizzaLabel = new Label(" " + pizzaItem.itemCount, labelStyle);
-
         collectionLabel = new Label("-Your Collection-", labelStyle);
-
         niceLabel = new Label("Nice!", labelStyle);
-        rewardLabel = new Label("Loyalty rewarded. :)", labelStyle);
 
         // adding the menu back button
         final TextureRegion bubbleBackButtonTexture = new TextureRegion(new Texture("backbutton.png"));
@@ -1173,10 +1168,31 @@ public class SillyBubblesGame extends Game {
         // for waiting
         waitingLabel = new Label("Bomb! You must wait. Ha ha ha.", labelStyle);
         waitingCounterLabel = new Label("0", labelStyleLarge);
+        if(bubbleItem.itemCount > 1000) {
+            //print
+            waitingLabel = new Label("Your loyalty is unquestionable. Props.", labelStyle);
+        }
+        if(bubbleItem.itemCount > 10000) {
+            waitingLabel = new Label("You are bubble master.", labelStyle);
+        }
+        if(bubbleItem.itemCount > 25000) {
+            waitingLabel = new Label("Bubble king!", labelStyle);
+        }
+        if(bubbleItem.itemCount > 50000) {
+            waitingLabel = new Label("Really? All Hail Bubble King!", labelStyle);
+        }
+        if(bubbleItem.itemCount > 100000) {
+            waitingLabel = new Label("Extreme Loyalty.", labelStyle);
+        }
+        if(bubbleItem.itemCount > 500000) {
+            waitingLabel = new Label("That's all folks!", labelStyle);
+        }
+        if(bubbleItem.itemCount > 1000000) {
+            waitingLabel = new Label("You Rule.", labelStyle);
+        }
         waitingCounterLabel.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        waitingStage.addActor(waitingCounterLabel);
-
         waitingLabel.setPosition(0, 0);
+        waitingStage.addActor(waitingCounterLabel);
         waitingStage.addActor(waitingLabel);
 
         // screenshot saved label
@@ -1271,8 +1287,9 @@ public class SillyBubblesGame extends Game {
         prefs.putInteger(pizzaItem.itemName, pizzaItem.itemCount);
         prefs.flush(); // saves the preferences file
         Gdx.app.log("JSLOG", "Game Paused.");
-		//Gdx.app.log("JSLOG", "You have " + diamondItem.getItemCount() + " diamonds.");
-	}
+
+    }
+
 
 	@Override
 	public void resume() {
@@ -1300,6 +1317,6 @@ public class SillyBubblesGame extends Game {
         BufferUtils.copy(pixels, 0, pixmap.getPixels(), pixels.length);
         PixmapIO.writePNG(Gdx.files.external("SillyBubbles/sillybubblescapture.png"), pixmap);
         pixmap.dispose();
-        Gdx.app.log("JSLOG", "Screenshot saved as SillyBubbles/sillybubbles.png");
+        Gdx.app.log("JSLOG", "Screenshot saved as SillyBubbles/sillybubblescapture.png");
     }
 }
