@@ -1,11 +1,15 @@
 package com.sillybubbles.game.android;
 
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.sillybubbles.game.AdsController;
@@ -23,7 +27,10 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
     private static final String BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111";
     AdView bannerAd;
 
-	@Override
+    private static final String INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
+    InterstitialAd interstitialAd;
+
+    @Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
@@ -53,6 +60,22 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
         bannerAd.setBackgroundColor(0xff000000); // black
         bannerAd.setAdUnitId(BANNER_AD_UNIT_ID);
         bannerAd.setAdSize(AdSize.SMART_BANNER);
+
+        interstitialAd = new InterstitialAd(this);
+        interstitialAd.setAdUnitId(INTERSTITIAL_AD_UNIT_ID);
+
+        AdRequest.Builder builder = new AdRequest.Builder();
+        AdRequest ad = builder.build();
+        interstitialAd.loadAd(ad);
+    }
+
+    @Override
+    public boolean isWifiConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        //NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        return (ni != null && ni.isConnected());
     }
 
     @Override
@@ -77,6 +100,34 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
             }
         });
     }
+
+    @Override
+    public void showInterstitialAd(final Runnable then) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (then != null) {
+                    interstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdClosed() {
+                            Gdx.app.postRunnable(then);
+                            AdRequest.Builder builder = new AdRequest.Builder();
+                            AdRequest ad = builder.build();
+                            interstitialAd.loadAd(ad);
+                        }
+                    });
+                }
+                interstitialAd.show();
+            }
+        });
+    }
 }
-//bottom banner
+//bottom banner admob unit id
 //ca-app-pub-2390888048112065/4633106838
+//interstitial admob unit id
+//ca-app-pub-2390888048112065/5411836032
+
+//dummy banner
+//ca-app-pub-3940256099942544/6300978111
+//dummy interstitial
+//ca-app-pub-3940256099942544/1033173712

@@ -105,6 +105,7 @@ public class SillyBubblesGame extends Game {
     boolean playing = true; // flag to switch between playing and checking items
     boolean waiting = false;
     boolean needScreenshot = false;
+    boolean firstRun = true; // this is the first run of the game
 
     class BubbleButton extends Actor {
         private TextureRegion _texture;
@@ -1173,8 +1174,10 @@ public class SillyBubblesGame extends Game {
         screenshotSavedLabel = new Label("Screenshot saved.", labelStyle);
         screenshotSavedLabel.setPosition((Gdx.graphics.getWidth() / 2)/2, 0);
 
-        // show banner ad
-        adsController.showBannerAd();
+        // show banner ad if connected
+        if(adsController.isWifiConnected()) {
+            adsController.showBannerAd();
+        }
     }
 
     private AdsController adsController;
@@ -1216,6 +1219,7 @@ public class SillyBubblesGame extends Game {
             menuStage.addActor(screenshotSavedLabel);
             needScreenshot = false;
         }
+
 	}
 
 	@Override
@@ -1259,12 +1263,26 @@ public class SillyBubblesGame extends Game {
         prefs.flush(); // saves the preferences file
         Gdx.app.log("JSLOG", "Game Paused.");
 		//Gdx.app.log("JSLOG", "You have " + diamondItem.getItemCount() + " diamonds.");
-
 	}
 
 	@Override
 	public void resume() {
 		Gdx.app.log("JSLOG", "Game On.");
+
+        // interstitial ad on pause
+        if (adsController.isWifiConnected() && !firstRun) {
+            adsController.showInterstitialAd(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Interstitial app closed");
+                    //Gdx.app.exit();
+                }
+            });
+        } else {
+            System.out.println("Interstitial ad not (yet) loaded");
+        }
+
+        firstRun = false;
 	}
 
     public void takeScreenshot() {
