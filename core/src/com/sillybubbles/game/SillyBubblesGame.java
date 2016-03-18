@@ -148,7 +148,6 @@ public class SillyBubblesGame extends Game {
                         Gdx.app.log("JSLOG", "Bubble button pressed.");
 
                         bubbleLabel.setText(" " + bubbleItem.getItemCount());
-
                         diamondLabel.setText(" " + diamondItem.getItemCount());
                         firstAidLabel.setText(" " + firstAidItem.getItemCount());
                         starLabel.setText(" " + starItem.getItemCount());
@@ -292,7 +291,7 @@ public class SillyBubblesGame extends Game {
         @Override
         public void act(float delta) {
             //this.setPosition(getParent().getX(), getHeight());//Gdx.graphics.getHeight() - _texture.getRegionHeight());
-            this.setPosition(Gdx.graphics.getWidth()-this.getWidth(), 0);//Gdx.graphics.getHeight() - _texture.getRegionHeight());
+            //this.setPosition(Gdx.graphics.getWidth()-this.getWidth(), 0);//Gdx.graphics.getHeight() - _texture.getRegionHeight());
         }
     }
 
@@ -351,7 +350,7 @@ public class SillyBubblesGame extends Game {
 
             this.pe.load(Gdx.files.internal("bubblepop.p"), Gdx.files.internal(""));
             this.pe.getEmitters().first().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-            this.pe.scaleEffect(scaleModifier);
+            //this.pe.scaleEffect(scaleModifier);
 
             Random random = new Random();
             int randomBubble = random.nextInt(8) + 1;
@@ -959,7 +958,8 @@ public class SillyBubblesGame extends Game {
             scaleModifier = 2f;
             speedModifier = 4;
             penguinWalking.scaleBy(5f);
-            penguinWalking.setPosition(0, 300);
+            penguinWalking.setPosition(0, 320);
+            screenShotButton.setPosition(Gdx.graphics.getWidth() - screenShotButton.getWidth(), 0);
             background = new TextureRegion(new Texture("hillsxxxhdpi.png"));
 
         }
@@ -988,6 +988,7 @@ public class SillyBubblesGame extends Game {
             speedModifier = 3;
             penguinWalking.scaleBy(5f);
             penguinWalking.setPosition(0, 300);
+            screenShotButton.setPosition(Gdx.graphics.getWidth() - screenShotButton.getWidth(), 0);
             background = new TextureRegion(new Texture("hillsxxhdpi.png"));
 
         }
@@ -1019,6 +1020,7 @@ public class SillyBubblesGame extends Game {
             bubbleButton.setScale(.5f);
             bubbleBackButton.setScale(.5f);
             screenShotButton.setScale(.5f);
+            screenShotButton.setPosition(Gdx.graphics.getWidth() - 132, 0);
             background = new TextureRegion(new Texture("hillsxhdpi.png"));
 
         }
@@ -1050,6 +1052,7 @@ public class SillyBubblesGame extends Game {
             bubbleButton.setScale(.35f);
             bubbleBackButton.setScale(.35f);
             screenShotButton.setScale(.35f);
+            screenShotButton.setPosition(Gdx.graphics.getWidth() - 98, 0);
             background = new TextureRegion(new Texture("hillshdpi.png"));
         }
 
@@ -1081,6 +1084,7 @@ public class SillyBubblesGame extends Game {
             bubbleButton.setScale(.25f);
             bubbleBackButton.setScale(.25f);
             screenShotButton.setScale(.25f);
+            screenShotButton.setPosition(Gdx.graphics.getWidth() - 68, 0);
             background = new TextureRegion(new Texture("hillsmdpi.png"));
         }
         if (screenType == ScreenType.LDPI)  {
@@ -1111,6 +1115,7 @@ public class SillyBubblesGame extends Game {
             bubbleButton.setScale(.25f);
             bubbleBackButton.setScale(.25f);
             screenShotButton.setScale(.25f);
+            screenShotButton.setPosition(Gdx.graphics.getWidth() - 68, 0);
             background = new TextureRegion(new Texture("hillsmdpi.png"));
         }
 
@@ -1164,13 +1169,18 @@ public class SillyBubblesGame extends Game {
         waitingLabel.setPosition(0, 0);
         waitingStage.addActor(waitingLabel);
 
-
-
-
-
-        //screenshot saved label
+        // screenshot saved label
         screenshotSavedLabel = new Label("Screenshot saved.", labelStyle);
         screenshotSavedLabel.setPosition((Gdx.graphics.getWidth() / 2)/2, 0);
+
+        // show banner ad
+        adsController.showBannerAd();
+    }
+
+    private AdsController adsController;
+
+    public SillyBubblesGame(AdsController adsController){
+        this.adsController = adsController;
     }
 
 	@Override
