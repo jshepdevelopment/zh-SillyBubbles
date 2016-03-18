@@ -87,6 +87,7 @@ public class SillyBubblesGame extends Game {
     Label pizzaLabel;
 
     Label collectionLabel;
+    Label rewardLabel;
     Label niceLabel;
 
     Label waitingLabel;
@@ -106,6 +107,7 @@ public class SillyBubblesGame extends Game {
     boolean waiting = false;
     boolean needScreenshot = false;
     boolean firstRun = true; // this is the first run of the game
+    boolean adLoyaltyReward = false; // remove interstitial ad for loyalty
 
     class BubbleButton extends Actor {
         private TextureRegion _texture;
@@ -427,7 +429,11 @@ public class SillyBubblesGame extends Game {
 					}
 					if(this.prizeID==2) {
 						firstAidItem.itemCount++;
+                        if(adsController.isWifiConnected()) {
+                            adsController.hideBannerAd();
+                        }
 						Gdx.app.log("JSLOG", firstAidItem.getItemCount() + " First-aid collected.");
+                        Gdx.app.log("JSLOG", firstAidItem.getItemCount() + " Banner ad removed.");
 					}
 					if(this.prizeID==3) {
 						starItem.itemCount++;
@@ -497,6 +503,9 @@ public class SillyBubblesGame extends Game {
                         // this is not actually a prize, collecting a bomb halts game for 5 seconds
                         Gdx.app.log("JSLOG", "Boom!");
                         waiting = true;
+                        if(adsController.isWifiConnected()) {
+                            adsController.showBannerAd();
+                        }
                         startTime = TimeUtils.millis();
                     }
                     // pop the bubble
@@ -557,7 +566,6 @@ public class SillyBubblesGame extends Game {
 				this.prizeTexture = firstAidTexture;
 				this.prizeID = 2;
                 if (debug) firstAidItem.itemCount++;
-
             }
 			if (randomPrize > 3000 && randomPrize <= 6000) {
 				this.prizeTexture = starTexture;
@@ -642,7 +650,7 @@ public class SillyBubblesGame extends Game {
             if (randomPrize > 32500 && randomPrize <= 33500) {
                 this.prizeTexture = bombTexture;
                 prizeID = 19;
-            }
+              }
 
             if (randomPrize > 33500 && randomPrize <= 49995) {
                 this.prizeTexture = emptyTexture;
@@ -829,6 +837,7 @@ public class SillyBubblesGame extends Game {
         collectionLabel = new Label("-Your Collection-", labelStyle);
 
         niceLabel = new Label("Nice!", labelStyle);
+        rewardLabel = new Label("Loyalty rewarded. :)", labelStyle);
 
         // adding the menu back button
         final TextureRegion bubbleBackButtonTexture = new TextureRegion(new Texture("backbutton.png"));
