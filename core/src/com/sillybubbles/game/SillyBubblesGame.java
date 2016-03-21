@@ -3,6 +3,8 @@ package com.sillybubbles.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -28,11 +30,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.Random;
 
 public class SillyBubblesGame extends Game {
+
+    // Load music and sound effects
+    Music mp3Music;
+    Sound bubblePopSound;
+    Sound applauseSound;
+
 
     public enum ScreenType {
         LDPI, MDPI, HDPI, XHDPI, XXHDPI, XXXHDPI
@@ -110,8 +119,7 @@ public class SillyBubblesGame extends Game {
     class BubbleButton extends Actor {
         private TextureRegion _texture;
 
-        public BubbleButton(TextureRegion texture){
-            // set bounds
+        public BubbleButton(TextureRegion texture){            // set bounds
             _texture = texture;
             setBounds(getX(), getY(), _texture.getRegionWidth(), _texture.getRegionHeight());
 
@@ -170,6 +178,7 @@ public class SillyBubblesGame extends Game {
 
                         Gdx.input.setInputProcessor(menuStage);
                         playing = false;
+                        applauseSound.play();
                         Gdx.app.log("JSLOG", "playing should be false,  playing is " + playing);
                 }
             }
@@ -507,6 +516,7 @@ public class SillyBubblesGame extends Game {
                         startTime = TimeUtils.millis();
                     }
                     // pop the bubble
+                    bubblePopSound.play();
                     Gdx.input.vibrate(25);
                     bubbleItem.itemCount++;
                     Gdx.app.log("JSLOG", bubbleItem.getItemCount() + " bubbles popped.");
@@ -684,6 +694,11 @@ public class SillyBubblesGame extends Game {
 
 	@Override
 	public void create() {
+
+        // Music
+        mp3Music = Gdx.audio.newMusic(Gdx.files.internal("anewday.mp3"));
+        bubblePopSound = Gdx.audio.newSound(Gdx.files.internal("pop.ogg"));
+        applauseSound = Gdx.audio.newSound(Gdx.files.internal("applause.mp3"));
 
         //Define the screen as MDPI as baseline
         ScreenType screenType = ScreenType.MDPI;
@@ -1203,6 +1218,9 @@ public class SillyBubblesGame extends Game {
         if(adsController.isWifiConnected()) {
             adsController.showBannerAd();
         }
+
+        //play music
+        mp3Music.play();
     }
 
     private AdsController adsController;
@@ -1213,7 +1231,11 @@ public class SillyBubblesGame extends Game {
 
 	@Override
 	public void dispose() {
-		stage.dispose();
+        mp3Music.dispose();
+        bubblePopSound.dispose();
+        applauseSound.dispose();
+
+        stage.dispose();
         menuStage.dispose();
         waitingStage.dispose();
 	}
