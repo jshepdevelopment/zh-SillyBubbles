@@ -23,11 +23,18 @@ import com.google.android.gms.ads.InterstitialAd;
 
 public class AndroidLauncher extends AndroidApplication implements AdsController {
 
-    // uses temporary dummy ID
+    // live ID
     private static final String BANNER_AD_UNIT_ID = "ca-app-pub-2390888048112065/4633106838";
+    // dummy ID
+    //private static final String BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111";
+
     AdView bannerAd;
 
+    // live ID
     private static final String INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-2390888048112065/5411836032";
+    // dummy ID
+    //private static final String INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
+
     InterstitialAd interstitialAd;
 
     @Override

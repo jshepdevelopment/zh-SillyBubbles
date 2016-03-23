@@ -72,6 +72,7 @@ public class SillyBubblesGame extends Game {
     PrizeItem breadItem = new PrizeItem("Bread", 0);
     PrizeItem burgerItem = new PrizeItem("Burger", 0);
     PrizeItem pizzaItem = new PrizeItem("Pizza", 0);
+    PrizeItem rocketPenguinItem = new PrizeItem("Rocket Penguin", 0);
 
     // item labels to display item count on collection/menu screen
     Label bubbleLabel;
@@ -93,6 +94,8 @@ public class SillyBubblesGame extends Game {
     Label breadLabel;
     Label burgerLabel;
     Label pizzaLabel;
+    Label rocketPenguinLabel;
+
 
     Label collectionLabel;
     Label niceLabel;
@@ -174,6 +177,7 @@ public class SillyBubblesGame extends Game {
                         breadLabel.setText(" " + breadItem.getItemCount());
                         burgerLabel.setText(" " + burgerItem.getItemCount());
                         pizzaLabel.setText(" " + pizzaItem.getItemCount());
+                        rocketPenguinLabel.setText(" " + rocketPenguinItem.getItemCount());
 
                         Gdx.input.setInputProcessor(menuStage);
                         playing = false;
@@ -332,6 +336,7 @@ public class SillyBubblesGame extends Game {
         TextureRegion breadTexture = new TextureRegion(new Texture("bread.png"));
         TextureRegion burgerTexture = new TextureRegion(new Texture("burger.png"));
         TextureRegion pizzaTexture = new TextureRegion(new Texture("pizza.png"));
+        TextureRegion rocketPenguinTexture = new TextureRegion(new Texture("rocketpenguin.png"));
 
         TextureRegion bombTexture = new TextureRegion(new Texture("bomb.png"));
         TextureRegion emptyTexture = new TextureRegion(new Texture("empty.png"));
@@ -428,6 +433,8 @@ public class SillyBubblesGame extends Game {
             if(distance <= radius) {
 				// check for justTouched will prevent holding hits
 				if(Gdx.input.justTouched()) {
+                    // play bubble pop sound
+                    bubblePopSound.play();
 					//Gdx.app.log("JSLOG", "bubble " + this + " hit!");
 					if(this.prizeID==1) {
 						diamondItem.itemCount++;
@@ -503,7 +510,7 @@ public class SillyBubblesGame extends Game {
                     }
                     if(this.prizeID==18) {
                         pizzaItem.itemCount++;
-                        Gdx.app.log("JSLOG", pizzaItem.getItemCount() + " Zas  collected.");
+                        Gdx.app.log("JSLOG", pizzaItem.getItemCount() + " Zas collected.");
                     }
                     if(this.prizeID==19) {
                         // this is not actually a prize, collecting a bomb halts game for 5 seconds
@@ -514,8 +521,11 @@ public class SillyBubblesGame extends Game {
                         }
                         startTime = TimeUtils.millis();
                     }
+                    if(this.prizeID==20) {
+                        rocketPenguinItem.itemCount++;
+                        Gdx.app.log("JSLOG", rocketPenguinItem.getItemCount() + "Rocket penguins collected.");
+                    }
                     // pop the bubble
-                    bubblePopSound.play();
                     Gdx.input.vibrate(25);
                     bubbleItem.itemCount++;
                     Gdx.app.log("JSLOG", bubbleItem.getItemCount() + " bubbles popped.");
@@ -563,103 +573,131 @@ public class SillyBubblesGame extends Game {
             // special debug flag
             boolean debug = false;
 
+            // bool for prize is set
+            boolean hasPrize = false;
+
 			// set prize
 			if (randomPrize > 6000 && randomPrize <= 9000) {
 				this.prizeTexture = diamondTexture;
 				this.prizeID = 1;
+                hasPrize = true;
                 if (debug) diamondItem.itemCount++;
 			}
 			if (randomPrize > 0 && randomPrize <=  3000) {
 				this.prizeTexture = firstAidTexture;
 				this.prizeID = 2;
+                hasPrize = true;
                 if (debug) firstAidItem.itemCount++;
             }
 			if (randomPrize > 3000 && randomPrize <= 6000) {
 				this.prizeTexture = starTexture;
 				prizeID = 3;
+                hasPrize = true;
                 if (debug) starItem.itemCount++;
             }
             if (randomPrize > 29000 && randomPrize <= 30000) {
                 this.prizeTexture = bookTexture;
                 this.prizeID = 4;
+                hasPrize = true;
                 if (debug) bookItem.itemCount++;
             }
             if (randomPrize > 23000 && randomPrize <= 25000) {
                 this.prizeTexture = crystalTexture;
                 this.prizeID = 5;
+                hasPrize = true;
                 if (debug) crystalItem.itemCount++;
             }
             if (randomPrize >= 49995) {
                 this.prizeTexture = ringTexture;
                 prizeID = 6;
+                hasPrize = true;
                 if (debug) ringItem.itemCount++;
             }
             if (randomPrize > 31500 && randomPrize <= 32000) {
                 this.prizeTexture = jewel1Texture;
                 prizeID = 7;
+                hasPrize = true;
                 if (debug) jewel1Item.itemCount++;
             }
             if (randomPrize > 31000 && randomPrize <= 31500) {
                 this.prizeTexture = jewel2Texture;
                 prizeID = 8;
+                hasPrize = true;
                 if (debug) jewel2Item.itemCount++;
             }
             if (randomPrize > 21000 && randomPrize <= 23000) {
                 this.prizeTexture = jewel3Texture;
                 prizeID = 9;
+                hasPrize = true;
                 if (debug) jewel3Item.itemCount++;
             }
-            if (randomPrize > 32250 && randomPrize <= 35000) {
+            if (randomPrize > 34900 && randomPrize <= 35000) {
                 this.prizeTexture = dragonTexture;
                 this.prizeID = 10;
+                hasPrize = true;
                 if (debug) dragonItem.itemCount++;
             }
             if (randomPrize > 32000 && randomPrize <= 32250) {
                 this.prizeTexture = redDiamondTexture;
                 this.prizeID = 11;
+                hasPrize = true;
                 if (debug) redDiamondItem.itemCount++;
             }
             if (randomPrize > 30000 && randomPrize <= 31000) {
                 this.prizeTexture = cameraTexture;
                 prizeID = 12;
+                hasPrize = true;
                 if (debug) cameraItem.itemCount++;
             }
             if (randomPrize > 25000 && randomPrize <= 27000 ) {
                 this.prizeTexture = purpleBookTexture;
                 this.prizeID = 13;
+                hasPrize = true;
                 if (debug) purpleBookItem.itemCount++;
             }
             if (randomPrize > 27000 && randomPrize <= 29000) {
                 this.prizeTexture = appleTexture;
                 this.prizeID = 14;
+                hasPrize = true;
                 if (debug) appleItem.itemCount++;
             }
             if (randomPrize > 9000 && randomPrize <= 12000) {
                 this.prizeTexture = brownBookTexture;
                 prizeID = 15;
+                hasPrize = true;
                 if (debug) brownBookItem.itemCount++;
             }
             if (randomPrize > 12000 && randomPrize <=  15000) {
                 this.prizeTexture = breadTexture;
                 prizeID = 16;
+                hasPrize = true;
                 if (debug) breadItem.itemCount++;
             }
             if (randomPrize > 15000 && randomPrize <= 18000) {
                 this.prizeTexture = burgerTexture;
                 prizeID = 17;
+                hasPrize = true;
                 if (debug) burgerItem.itemCount++;
             }
             if (randomPrize > 18000 && randomPrize <= 21000) {
                 this.prizeTexture = pizzaTexture;
                 prizeID = 18;
+                hasPrize = true;
                 if (debug) pizzaItem.itemCount++;
             }
             if (randomPrize > 32500 && randomPrize <= 33500) {
                 this.prizeTexture = bombTexture;
+                hasPrize = true;
                 prizeID = 19;
               }
+            if (randomPrize > 33500 && randomPrize <= 33600) {
+                this.prizeTexture = rocketPenguinTexture;
+                this.prizeID = 20;
+                hasPrize = true;
+                if (debug) rocketPenguinItem.itemCount++;
+            }
 
-            if (randomPrize > 33500 && randomPrize <= 49995) {
+            if (!hasPrize) {
                 this.prizeTexture = emptyTexture;
                 prizeID = 0;// no prize ID is no prize
             }
@@ -693,6 +731,9 @@ public class SillyBubblesGame extends Game {
 
 	@Override
 	public void create() {
+
+        // debug flag
+        boolean debug = false;
 
         // Music
         mp3Music = Gdx.audio.newMusic(Gdx.files.internal("anewday.mp3"));
@@ -800,6 +841,8 @@ public class SillyBubblesGame extends Game {
         breadItem.itemCount = prefs.getInteger(breadItem.itemName);
         burgerItem.itemCount = prefs.getInteger(burgerItem.itemName);
         pizzaItem.itemCount = prefs.getInteger(pizzaItem.itemName);
+        rocketPenguinItem.itemCount = prefs.getInteger(rocketPenguinItem.itemName);
+
 
         // Item images used in menu screen
         Image bubbleImage = new Image(new TextureRegion((new Texture("bubblesmall.png"))));
@@ -821,6 +864,7 @@ public class SillyBubblesGame extends Game {
         Image breadImage = new Image(new TextureRegion((new Texture("bread.png"))));
         Image burgerImage = new Image(new TextureRegion((new Texture("burger.png"))));
         Image pizzaImage = new Image(new TextureRegion((new Texture("pizza.png"))));
+        Image rocketPenguinImage = new Image(new TextureRegion((new Texture("rocketpenguin.png"))));
         Image emptyImage = new Image(new TextureRegion((new Texture("empty.png"))));
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(textFont, Color.WHITE);
@@ -845,6 +889,7 @@ public class SillyBubblesGame extends Game {
         breadLabel = new Label(" " + breadItem.itemCount, labelStyle);
         burgerLabel = new Label(" " + burgerItem.itemCount, labelStyle);
         pizzaLabel = new Label(" " + pizzaItem.itemCount, labelStyle);
+        rocketPenguinLabel = new Label(" " + rocketPenguinItem.itemCount, labelStyle);
         collectionLabel = new Label("-Your Collection-", labelStyle);
         niceLabel = new Label("Nice!", labelStyle);
 
@@ -861,25 +906,22 @@ public class SillyBubblesGame extends Game {
 
         scrollTable.top().center();
         // impossibly rare items
-        //scrollTable.add(impossiblyRareLabel);
-        //scrollTable.row();
         scrollTable.add(collectionLabel).colspan(2);
         scrollTable.row();
         scrollTable.add(ringImage).left();
         scrollTable.add(ringLabel);
         scrollTable.row();
         // insanely rare items
-        //scrollTable.add(insanelyRareLabel);
-        //scrollTable.row();
-        scrollTable.add(redDiamondImage).left();
-        scrollTable.add(redDiamondLabel);
-        scrollTable.row();
         scrollTable.add(dragonImage).left();
         scrollTable.add(dragonLabel);
         scrollTable.row();
+        scrollTable.add(rocketPenguinImage).left();
+        scrollTable.add(rocketPenguinLabel);
+        scrollTable.row();
+        scrollTable.add(redDiamondImage).left();
+        scrollTable.add(redDiamondLabel);
+        scrollTable.row();
         // ultra rare items
-        //scrollTable.add(ultraRareLabel);
-        //scrollTable.row();
         scrollTable.add(jewel1Image).left();
         scrollTable.add(jewel1Label);
         scrollTable.row();
@@ -887,8 +929,6 @@ public class SillyBubblesGame extends Game {
         scrollTable.add(jewel2Label);
         scrollTable.row();
         // very rare items
-        //scrollTable.add(ultraRareLabel);
-        //scrollTable.row();
         scrollTable.add(bookImage).left();
         scrollTable.add(bookLabel);
         scrollTable.row();
@@ -973,9 +1013,11 @@ public class SillyBubblesGame extends Game {
             breadImage.setScale(2.5f);
             burgerImage.setScale(2.5f);
             pizzaImage.setScale(2.5f);
+            rocketPenguinImage.setScale(2.5f);
             bubbleCount = 12;
             scaleModifier = 2f;
             speedModifier = 4;
+            if(debug) speedModifier = 1000;
             penguinWalking.scaleBy(5f);
             penguinWalking.setPosition(0, 320);
             screenShotButton.setPosition(Gdx.graphics.getWidth() - screenShotButton.getWidth(), 0);
@@ -1002,6 +1044,7 @@ public class SillyBubblesGame extends Game {
             breadImage.setScale(2.5f);
             burgerImage.setScale(2.5f);
             pizzaImage.setScale(2.5f);
+            rocketPenguinImage.setScale(2.5f);
             bubbleCount = 12;
             scaleModifier = 1.8f;
             speedModifier = 3;
@@ -1031,6 +1074,7 @@ public class SillyBubblesGame extends Game {
             breadImage.setScale(1.5f);
             burgerImage.setScale(1.5f);
             pizzaImage.setScale(1.5f);
+            rocketPenguinImage.setScale(1.5f);
             bubbleCount = 12;
             scaleModifier = 1.5f;
             speedModifier = 3;
@@ -1063,6 +1107,7 @@ public class SillyBubblesGame extends Game {
             breadImage.setScale(1.25f);
             burgerImage.setScale(1.25f);
             pizzaImage.setScale(1.25f);
+            rocketPenguinImage.setScale(1.25f);
             bubbleCount = 10;
             scaleModifier = 1.0f;
             speedModifier = 2;
@@ -1095,6 +1140,7 @@ public class SillyBubblesGame extends Game {
             breadImage.setScale(1f);
             burgerImage.setScale(1f);
             pizzaImage.setScale(1f);
+            rocketPenguinImage.setScale(1f);
             bubbleCount = 8;
             scaleModifier = .8f;
             speedModifier = 1;
@@ -1126,6 +1172,7 @@ public class SillyBubblesGame extends Game {
             breadImage.setScale(1f);
             burgerImage.setScale(1f);
             pizzaImage.setScale(1f);
+            rocketPenguinImage.setScale(1f);
             bubbleCount = 8;
             scaleModifier = .8f;
             speedModifier = 1;
@@ -1306,6 +1353,7 @@ public class SillyBubblesGame extends Game {
         prefs.putInteger(breadItem.itemName, breadItem.itemCount);
         prefs.putInteger(burgerItem.itemName, burgerItem.itemCount);
         prefs.putInteger(pizzaItem.itemName, pizzaItem.itemCount);
+        prefs.putInteger(rocketPenguinItem.itemName, rocketPenguinItem.itemCount);
         prefs.flush(); // saves the preferences file
         Gdx.app.log("JSLOG", "Game Paused.");
 
