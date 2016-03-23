@@ -41,6 +41,13 @@ public class SillyBubblesGame extends Game {
     Sound bubblePopSound;
     Sound applauseSound;
 
+    public static float VOLUME = 1.0f;
+    public static boolean soundOn = true;
+
+    // adding a sound button
+    TextureRegion soundButtonTextureOn;
+    // adding a sound button
+    TextureRegion soundButtonTextureOff;
 
     public enum ScreenType {
         LDPI, MDPI, HDPI, XHDPI, XXHDPI, XXXHDPI
@@ -181,7 +188,7 @@ public class SillyBubblesGame extends Game {
 
                         Gdx.input.setInputProcessor(menuStage);
                         playing = false;
-                        applauseSound.play();
+                        applauseSound.play(VOLUME);
                         Gdx.app.log("JSLOG", "playing should be false,  playing is " + playing);
                 }
             }
@@ -305,6 +312,71 @@ public class SillyBubblesGame extends Game {
         public void act(float delta) {
             //this.setPosition(getParent().getX(), getHeight());//Gdx.graphics.getHeight() - _texture.getRegionHeight());
             //this.setPosition(Gdx.graphics.getWidth()-this.getWidth(), 0);//Gdx.graphics.getHeight() - _texture.getRegionHeight());
+        }
+    }
+
+    //sound button
+    class SoundButton extends Actor {
+        private TextureRegion _texture;
+
+        public SoundButton(TextureRegion texture){
+            // set bounds
+            _texture = texture;
+            setBounds(getX(), getY(), _texture.getRegionWidth(), _texture.getRegionHeight());
+
+            // get input
+            this.addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons) {
+                    return true;
+                }
+            });
+        }
+
+        // implements draw() completely to handle rotation and scaling
+        public void draw(Batch batch, float alpha) {
+            batch.draw(_texture, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
+                    getScaleX(), getScaleY(), getRotation());
+        }
+
+        public Actor hit(float x, float y, boolean touchable) {
+
+            // get centerpoint of bounding circle, also known as the center of the rect
+            float centerX = getWidth() / 2;
+            float centerY = getHeight() / 2;
+
+            // Calculate radius of circle
+            float radius = (float) Math.sqrt(centerX * centerX +
+                    centerY * centerY);
+
+            // And distance of point from the center of the circle
+            float distance = (float) Math.sqrt(((centerX - x) * (centerX - x))
+                    + ((centerY - y) * (centerY - y)));
+
+            // If the distance is less than the circle radius, it's a hit
+            if (distance <= radius) {
+                if (Gdx.input.justTouched()) {
+                    Gdx.app.log("JSLOG", "Sound button pressed.");
+
+                    if (soundOn) {
+                        this._texture = soundButtonTextureOff;
+                        mp3Music.stop();
+                        muteFX();
+                    }
+
+                    else if (!soundOn) {
+                        this._texture = soundButtonTextureOn;
+                        mp3Music.play();
+                        normalizeFX();
+                    }
+                }
+            }
+
+            // button not pressed, return null
+            return null;
+        }
+
+        @Override
+        public void act(float delta) {
         }
     }
 
@@ -434,7 +506,7 @@ public class SillyBubblesGame extends Game {
 				// check for justTouched will prevent holding hits
 				if(Gdx.input.justTouched()) {
                     // play bubble pop sound
-                    bubblePopSound.play();
+                    bubblePopSound.play(VOLUME);
 					//Gdx.app.log("JSLOG", "bubble " + this + " hit!");
 					if(this.prizeID==1) {
 						diamondItem.itemCount++;
@@ -765,7 +837,7 @@ public class SillyBubblesGame extends Game {
         Gdx.app.log("JSLOG", "screenType is " + screenType.toString());
 
         // setting up font
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("cartoon.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("chinese.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         FreeTypeFontGenerator.FreeTypeFontParameter parameterLarge = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
@@ -989,6 +1061,11 @@ public class SillyBubblesGame extends Game {
         // button textures
         final TextureRegion bubbleButtonTexture = new TextureRegion(new Texture("treasurechest.png"));
 
+        // adding sound button
+        soundButtonTextureOn = new TextureRegion(new Texture("soundon.png"));
+        soundButtonTextureOff = new TextureRegion(new Texture("soundoff.png"));
+        SoundButton soundButton = new SoundButton(soundButtonTextureOn);
+
         // add a bubbleButton
         BubbleButton bubbleButton = new BubbleButton(bubbleButtonTexture);
 
@@ -1021,6 +1098,7 @@ public class SillyBubblesGame extends Game {
             penguinWalking.scaleBy(5f);
             penguinWalking.setPosition(0, 320);
             screenShotButton.setPosition(Gdx.graphics.getWidth() - screenShotButton.getWidth(), 0);
+            soundButton.setPosition(Gdx.graphics.getWidth() - soundButton.getWidth(), 0);
             background = new TextureRegion(new Texture("hillsxxxhdpi.png"));
 
         }
@@ -1051,6 +1129,7 @@ public class SillyBubblesGame extends Game {
             penguinWalking.scaleBy(5f);
             penguinWalking.setPosition(0, 300);
             screenShotButton.setPosition(Gdx.graphics.getWidth() - screenShotButton.getWidth(), 0);
+            soundButton.setPosition(Gdx.graphics.getWidth() - soundButton.getWidth(), 0);
             background = new TextureRegion(new Texture("hillsxxhdpi.png"));
 
         }
@@ -1083,7 +1162,9 @@ public class SillyBubblesGame extends Game {
             bubbleButton.setScale(.5f);
             bubbleBackButton.setScale(.5f);
             screenShotButton.setScale(.5f);
+            soundButton.setScale(.5f);
             screenShotButton.setPosition(Gdx.graphics.getWidth() - 132, 0);
+            soundButton.setPosition(Gdx.graphics.getWidth() - 132, 0);
             background = new TextureRegion(new Texture("hillsxhdpi.png"));
 
         }
@@ -1116,7 +1197,9 @@ public class SillyBubblesGame extends Game {
             bubbleButton.setScale(.35f);
             bubbleBackButton.setScale(.35f);
             screenShotButton.setScale(.35f);
+            soundButton.setScale(.35f);
             screenShotButton.setPosition(Gdx.graphics.getWidth() - 98, 0);
+            soundButton.setPosition(Gdx.graphics.getWidth() - 98, 0);
             background = new TextureRegion(new Texture("hillshdpi.png"));
         }
 
@@ -1150,6 +1233,8 @@ public class SillyBubblesGame extends Game {
             bubbleBackButton.setScale(.25f);
             screenShotButton.setScale(.25f);
             screenShotButton.setPosition(Gdx.graphics.getWidth() - 68, 0);
+            soundButton.setScale(.25f);
+            soundButton.setPosition(Gdx.graphics.getWidth() - 68, 0);
             background = new TextureRegion(new Texture("hillsmdpi.png"));
         }
         if (screenType == ScreenType.LDPI)  {
@@ -1182,6 +1267,7 @@ public class SillyBubblesGame extends Game {
             bubbleBackButton.setScale(.25f);
             screenShotButton.setScale(.25f);
             screenShotButton.setPosition(Gdx.graphics.getWidth() - 68, 0);
+            soundButton.setPosition(Gdx.graphics.getWidth() - 68, 0);
             background = new TextureRegion(new Texture("hillsmdpi.png"));
         }
 
@@ -1216,6 +1302,7 @@ public class SillyBubblesGame extends Game {
 
         // main stage actors, other than bubbles
         stage.addActor(bubbleButton);
+        stage.addActor(soundButton);
         stage.addActor(penguinWalking);
 
         // menu stage actors
@@ -1267,6 +1354,8 @@ public class SillyBubblesGame extends Game {
 
         //play music
         mp3Music.play();
+        mp3Music.setVolume(VOLUME);
+
     }
 
     private AdsController adsController;
@@ -1362,7 +1451,7 @@ public class SillyBubblesGame extends Game {
 
 	@Override
 	public void resume() {
-		Gdx.app.log("JSLOG", "Game On.");
+        Gdx.app.log("JSLOG", "Game On.");
 
         // interstitial ad on pause
         if (adsController.isWifiConnected() && !firstRun) {
@@ -1387,5 +1476,14 @@ public class SillyBubblesGame extends Game {
         PixmapIO.writePNG(Gdx.files.external("SillyBubbles/sillybubblescapture.png"), pixmap);
         pixmap.dispose();
         Gdx.app.log("JSLOG", "Screenshot saved as SillyBubbles/sillybubblescapture.png");
+    }
+
+    public static void muteFX(){
+        VOLUME = 0.0f;
+        soundOn = false;
+    }
+    public static void normalizeFX(){
+        VOLUME = 1.0f;
+        soundOn = true;
     }
 }
