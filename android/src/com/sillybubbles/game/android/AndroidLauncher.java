@@ -26,16 +26,16 @@ import java.util.Locale;
 public class AndroidLauncher extends AndroidApplication implements AdsController {
 
     // live ID
-    //private static final String BANNER_AD_UNIT_ID = "ca-app-pub-2390888048112065/4633106838";
+    private static final String BANNER_AD_UNIT_ID = "ca-app-pub-2390888048112065/4633106838";
     // dummy ID
-    private static final String BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111";
+    //private static final String BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111";
 
     AdView bannerAd;
 
     // live ID
-    //private static final String INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-2390888048112065/5411836032";
+    private static final String INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-2390888048112065/5411836032";
     // dummy ID
-    private static final String INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
+    //private static final String INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
 
     InterstitialAd interstitialAd;
 
